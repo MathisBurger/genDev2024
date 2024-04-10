@@ -1,2 +1,15 @@
-greeting:
-  message: "hello"
+quarkus:
+  http:
+    cors:
+      ~: true
+      origins: /.*/
+  datasource:
+    db-kind: postgresql
+    username: postgres
+    password: mysecretpassword
+    jdbc:
+      url: jdbc:postgresql://localhost:5432/c24tipping
+  hibernate-orm:
+    dialect: org.hibernate.dialect.PostgreSQLDialect
+    database:
+      generation: drop-and-create
