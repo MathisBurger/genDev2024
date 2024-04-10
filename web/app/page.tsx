@@ -1,8 +1,13 @@
 'use client';
 
+import Sidebar from "@/components/Sidebar";
+
 const Page = () => {
   return (
-      <h1>Hello World</h1>
+      <>
+        <Sidebar />
+        <h1>Hello World</h1>
+      </>
   );
 }
 

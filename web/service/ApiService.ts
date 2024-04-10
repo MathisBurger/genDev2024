@@ -3,6 +3,25 @@ import ResponseCode from "@/service/ResponseCode";
 
 class ApiService {
 
+    private username: string|null;
+
+    constructor(username?: string|null) {
+        this.username = username ?? null;
+    }
+
+    /**
+     * Sets the username
+     *
+     * @param username The username
+     */
+    public setUsername(username: string) {
+        this.username = username;
+    }
+
+    public isLoggedIn(): boolean {
+        return this.username !== null;
+    }
+
     /**
      * Performs login
      *

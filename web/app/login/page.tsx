@@ -4,6 +4,8 @@ import useApiService from "@/hooks/useApiService";
 import useSnackbar from "@/hooks/useSnackbar";
 import {useRouter} from "next/navigation";
 import {FormEvent} from "react";
+import {useCookies} from "react-cookie";
+import {maxLoginDuration} from "@/auth";
 
 
 const LoginPage = () => {
@@ -11,6 +13,7 @@ const LoginPage = () => {
     const apiService = useApiService();
     const snackbar = useSnackbar();
     const router = useRouter();
+    const [_, setCookie] = useCookies(['application_user']);
 
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -19,6 +22,8 @@ const LoginPage = () => {
         const resp = await apiService.login(username);
         if (resp) {
             snackbar.success("Login erfolgreich!");
+            apiService.setUsername(username);
+            setCookie('application_user', username, {path: '/', expires: new Date((new Date()).getTime() + maxLoginDuration)});
             router.push("/");
         } else {
             snackbar.error("Login fehlgeschlagen!");
