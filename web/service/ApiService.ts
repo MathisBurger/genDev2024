@@ -9,7 +9,7 @@ class ApiService {
      * @param username The username
      */
     public async login(username: string): Promise<boolean> {
-        const resp = await ApiService.post<never>("/api/user/login", {username});
+        const resp = await ApiService.post<never>("/api/user/login", {username}, false);
         return resp === ResponseCode.OK;
     }
 
@@ -19,7 +19,7 @@ class ApiService {
      * @param username The username
      */
     public async register(username: string): Promise<boolean> {
-        const resp = await ApiService.post<never>("/api/user/register", {username});
+        const resp = await ApiService.post<never>("/api/user/register", {username}, false);
         return resp === ResponseCode.OK;
     }
 
@@ -54,7 +54,11 @@ class ApiService {
         const fullPath = (process.env.NODE_ENV === "development" ? "http://localhost:8080" : "") + path;
         const resp = await fetch(fullPath, {
             method: "POST",
-            body: JSON.stringify(body)
+            body: JSON.stringify(body),
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
         });
         if (!json) {
             return resp.status as ResponseCode;

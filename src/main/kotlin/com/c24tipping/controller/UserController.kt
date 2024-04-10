@@ -30,7 +30,7 @@ class UserController {
             this.userService.registerUser(body.username);
             return Response.ok().build();
         } catch (e: UserExistsException) {
-            return Response.status(400).build();
+            return Response.status(400, e.message!!).build();
         }
     }
 

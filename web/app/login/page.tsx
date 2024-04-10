@@ -1,8 +1,29 @@
 'use client';
 import {Box, Button, FormControl, FormLabel, Stack, Typography, Input, Link, Card, CardContent} from "@mui/joy";
+import useApiService from "@/hooks/useApiService";
+import useSnackbar from "@/hooks/useSnackbar";
+import {useRouter} from "next/navigation";
+import {FormEvent} from "react";
 
 
 const LoginPage = () => {
+
+    const apiService = useApiService();
+    const snackbar = useSnackbar();
+    const router = useRouter();
+
+    const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
+        const username = data.get("username") as string;
+        const resp = await apiService.login(username);
+        if (resp) {
+            snackbar.success("Login erfolgreich!");
+            router.push("/");
+        } else {
+            snackbar.error("Login fehlgeschlagen!");
+        }
+    }
 
 
     return (
@@ -23,10 +44,10 @@ const LoginPage = () => {
                         </Stack>
                     </Stack>
                     <Stack gap={4} sx={{ mt: 2 }}>
-                        <form>
+                        <form onSubmit={onSubmit}>
                             <FormControl required>
                                 <FormLabel>Nutzername</FormLabel>
-                                <Input type="text" name="username" />
+                                <Input type="text" name="username" required />
                             </FormControl>
                             <Stack gap={4} sx={{ mt: 2 }}>
                                 <Button type="submit" fullWidth>
