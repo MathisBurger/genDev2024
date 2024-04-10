@@ -1,13 +1,13 @@
 'use client';
 
 import Sidebar from "@/components/Sidebar";
+import AuthorizedLayout from "@/components/AuthorizedLayout";
 
 const Page = () => {
   return (
-      <>
-        <Sidebar />
-        <h1>Hello World</h1>
-      </>
+      <AuthorizedLayout>
+          <h1>Dashboard</h1>
+      </AuthorizedLayout>
   );
 }
 

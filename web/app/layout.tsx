@@ -2,9 +2,9 @@
 import {API_SERVICE_CONTEXT} from "@/hooks/useApiService";
 import ApiService from "@/service/ApiService";
 import {SnackbarProvider} from "notistack";
-import {useEffect, useMemo} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {useCookies} from "react-cookie";
-import {useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import {unauthorizedLocations} from "@/auth";
 
 export default function RootLayout({
@@ -15,6 +15,7 @@ export default function RootLayout({
 
     const [cookies, setCookie] = useCookies(['application_user']);
     const router = useRouter();
+    const pathname = usePathname();
 
     const apiService = useMemo<ApiService>(() => {
         const cookie = cookies.application_user as string;
@@ -25,10 +26,10 @@ export default function RootLayout({
 
     useEffect(() => {
         console.log(isLoggedIn);
-        if (!isLoggedIn && !unauthorizedLocations.includes(location.pathname)) {
+        if (!isLoggedIn && !unauthorizedLocations.includes(pathname)) {
             router.push("/login");
         }
-    }, [router, isLoggedIn, unauthorizedLocations]);
+    }, [router, isLoggedIn, unauthorizedLocations, pathname]);
 
   return (
     <html lang="en">

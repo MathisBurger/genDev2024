@@ -15,6 +15,7 @@ import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import {useRouter} from "next/navigation";
 import {closeSidebar} from "@/utils/sidebarUtils";
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import PeopleIcon from '@mui/icons-material/People';
 
 /**
  * The sidebar
@@ -103,6 +104,14 @@ const Sidebar = () => {
                             <DashboardIcon />
                             <ListItemContent>
                                 <Typography level="title-sm">Dashboard</Typography>
+                            </ListItemContent>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem>
+                        <ListItemButton onClick={() => router.push("/communities")}>
+                            <PeopleIcon />
+                            <ListItemContent>
+                                <Typography level="title-sm">Communities</Typography>
                             </ListItemContent>
                         </ListItemButton>
                     </ListItem>
