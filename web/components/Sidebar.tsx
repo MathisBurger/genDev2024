@@ -16,6 +16,7 @@ import {useRouter} from "next/navigation";
 import {closeSidebar} from "@/utils/sidebarUtils";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
+import {useCookies} from "react-cookie";
 
 /**
  * The sidebar
@@ -25,6 +26,7 @@ import PeopleIcon from '@mui/icons-material/People';
 const Sidebar = () => {
 
     const router = useRouter();
+    const [cookies, _, removeCookie] = useCookies(['application_user']);
 
     return (
         <Sheet
@@ -120,9 +122,9 @@ const Sidebar = () => {
             <Divider />
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
                 <Box sx={{ minWidth: 0, flex: 1 }}>
-                    <Typography level="title-sm">Username</Typography>
+                    <Typography level="title-sm">{cookies.application_user}</Typography>
                 </Box>
-                <IconButton size="sm" variant="plain" color="neutral">
+                <IconButton size="sm" variant="plain" color="neutral" onClick={() => removeCookie('application_user')}>
                     <LogoutRoundedIcon />
                 </IconButton>
             </Box>

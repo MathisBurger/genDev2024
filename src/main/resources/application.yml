@@ -12,4 +12,4 @@ quarkus:
   hibernate-orm:
     dialect: org.hibernate.dialect.PostgreSQLDialect
     database:
-      generation: drop-and-create
+      generation: update

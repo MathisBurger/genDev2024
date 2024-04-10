@@ -31,6 +31,21 @@ class CommunityController {
     }
 
     /**
+     * Gets a specific community
+     *
+     * @param id The ID of the community
+     */
+    @GET
+    @Path("/{id}")
+    fun getCommunity(@PathParam("id") id: Long): Response {
+        try {
+            return Response.ok(this.communityService.getCommunity(id)).build();
+        } catch (e: Exception) {
+            return Response.status(400).entity(e.message).build();
+        }
+    }
+
+    /**
      * Gets the amount of communities
      */
     @GET

@@ -2,6 +2,9 @@ package com.c24tipping.service
 
 import com.c24tipping.data.request.CreateCommunityRequest
 import com.c24tipping.data.request.JoinCommunityRequest
+import com.c24tipping.data.response.CommunityMember
+import com.c24tipping.data.response.CommunityResponse
+import com.c24tipping.data.response.ExtendedCommunityResponse
 import com.c24tipping.entity.Community
 import com.c24tipping.exception.TooManyCommunitiesException
 import com.c24tipping.exception.UnknownCommunityException
@@ -30,8 +33,8 @@ class CommunityService : AbstractService() {
      * @param pageSize The size of a page
      * @param pageNr The number of the page
      */
-    fun getAllCommunities(pageSize: Int, pageNr: Int): List<Community> {
-        return this.communityRepository.pageCommunities(pageSize, pageNr);
+    fun getAllCommunities(pageSize: Int, pageNr: Int): List<CommunityResponse> {
+        return this.communityRepository.pageCommunities(pageSize, pageNr).map { this.convertToList(it) };
     }
 
     /**
@@ -47,7 +50,7 @@ class CommunityService : AbstractService() {
      * @param data The data on which the community is created
      */
     @Transactional
-    fun createNewCommunity(data: CreateCommunityRequest): Community {
+    fun createNewCommunity(data: CreateCommunityRequest): ExtendedCommunityResponse {
         val user = this.userRepository.findByUsername(data.username);
         if (user.isEmpty) {
             throw UnknownUserException("Der Nutzer existiert nicht");
@@ -62,7 +65,7 @@ class CommunityService : AbstractService() {
         user.get().communities.add(community);
         this.entityManager.persist(user.get());
         this.entityManager.flush();
-        return community;
+        return this.convertToExtended(community);
     }
 
     /**
@@ -71,7 +74,7 @@ class CommunityService : AbstractService() {
      * @param data The data to join.
      */
     @Transactional
-    fun joinCommunity(data: JoinCommunityRequest): Community {
+    fun joinCommunity(data: JoinCommunityRequest): ExtendedCommunityResponse {
         val user = this.userRepository.findByUsername(data.username);
         if (user.isEmpty) {
             throw UnknownUserException("Der Nutzer existiert nicht");
@@ -88,6 +91,45 @@ class CommunityService : AbstractService() {
         this.entityManager.persist(community.get());
         this.entityManager.persist(user.get());
         this.entityManager.flush();
-        return community.get();
+        return this.convertToExtended(community.get());
+    }
+
+    /**
+     * Gets a community by ID
+     *
+     * @param id The ID
+     */
+    fun getCommunity(id: Long): ExtendedCommunityResponse {
+        val community = this.communityRepository.findByIdOptional(id);
+        if (community.isEmpty) {
+            throw UnknownCommunityException("Diese Community existiert nicht");
+        }
+        return this.convertToExtended(community.get());
+    }
+
+    /**
+     * Converts to extended community response
+     *
+     * @param community The community
+     */
+    private fun convertToExtended(community: Community): ExtendedCommunityResponse {
+        return ExtendedCommunityResponse(
+            community.id!!,
+            community.name!!,
+            community.members.map { CommunityMember(it.id!!, it.username!!) }
+        )
+    }
+
+    /**
+     * Converts to community response
+     *
+     * @param community The community
+     */
+    private fun convertToList(community: Community): CommunityResponse {
+        return CommunityResponse(
+            community.id!!,
+            community.name!!,
+            community.members.size
+        );
     }
 }

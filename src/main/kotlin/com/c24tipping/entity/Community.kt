@@ -1,6 +1,8 @@
 package com.c24tipping.entity
 
 import jakarta.persistence.Entity
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
 
 /**
@@ -17,6 +19,9 @@ class Community : AbstractEntity() {
     /**
      * All members of a community
      */
-    @ManyToMany(mappedBy = "communities")
+    @ManyToMany
+    @JoinTable(name = "community_user",
+        joinColumns = [JoinColumn(name = "community_id", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")])
     var members: MutableList<User> = mutableListOf();
 }
