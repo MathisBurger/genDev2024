@@ -1,5 +1,7 @@
 import ResponseCode from "@/service/ResponseCode";
 import {Community, ExtendedCommunity} from "@/typings/community";
+import {PersonalBet} from "@/typings/bet";
+import {MinifiedGame} from "@/typings/game";
 
 export interface ApiResponse<T> {
     status: ResponseCode;
@@ -82,7 +84,7 @@ class ApiService {
      * @param id The ID of the community
      */
     public async joinCommunity(id: number): Promise<ApiResponse<ExtendedCommunity>> {
-        return await ApiService.post<ExtendedCommunity>("/api/communities/join", {username: this.username, communityId: id}) as ApiResponse<ExtendedCommunity>;
+        return await ApiService.post<ExtendedCommunity>("/api/communities/join", {username: this.username, communityId: id});
     }
 
     /**
@@ -91,14 +93,36 @@ class ApiService {
      * @param id The ID of the community
      */
     public async getCommunity(id: number): Promise<ApiResponse<ExtendedCommunity>> {
-        return await ApiService.get<ExtendedCommunity>(`/api/communities/${id}`) as ApiResponse<ExtendedCommunity>;
+        return await ApiService.get<ExtendedCommunity>(`/api/communities/${id}`);
     }
 
     /**
      * Gets all personal communities
      */
     public async getPersonalCommunities(): Promise<ApiResponse<Community[]>> {
-        return await ApiService.get<Community[]>(`/api/communities/personal?username=${this.username}`) as ApiResponse<Community[]>;
+        return await ApiService.get<Community[]>(`/api/communities/personal?username=${this.username}`);
+    }
+
+    /**
+     * Gets all personal bets
+     */
+    public async getPersonalBets(): Promise<ApiResponse<PersonalBet[]>> {
+        return await ApiService.get<PersonalBet[]>(`/api/bets/personal?username=${this.username}`);
+    }
+
+    /**
+     * Places a bet
+     *
+     * @param gameId The ID of the game
+     * @param homeGoals The number of home goals
+     * @param awayGoals The number of away goals
+     */
+    public async placeBet(gameId: number, homeGoals: number, awayGoals: number): Promise<ApiResponse<string>> {
+        return await ApiService.post<string>("/api/bets/place", {username: this.username, gameId, homeGoals, awayGoals});
+    }
+
+    public async getAllGames(): Promise<ApiResponse<MinifiedGame[]>> {
+        return await ApiService.get<MinifiedGame[]>("/api/games");
     }
 
     /**

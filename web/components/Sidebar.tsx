@@ -17,6 +17,8 @@ import {closeSidebar} from "@/utils/sidebarUtils";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PeopleIcon from '@mui/icons-material/People';
 import {useCookies} from "react-cookie";
+import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 
 /**
  * The sidebar
@@ -114,6 +116,22 @@ const Sidebar = () => {
                             <PeopleIcon />
                             <ListItemContent>
                                 <Typography level="title-sm">Communities</Typography>
+                            </ListItemContent>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem>
+                        <ListItemButton onClick={() => router.push("/games")}>
+                            <SportsSoccerIcon />
+                            <ListItemContent>
+                                <Typography level="title-sm">Spiele</Typography>
+                            </ListItemContent>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem>
+                        <ListItemButton onClick={() => router.push("/bets")}>
+                            <AttachMoneyIcon />
+                            <ListItemContent>
+                                <Typography level="title-sm">Wetten</Typography>
                             </ListItemContent>
                         </ListItemButton>
                     </ListItem>
