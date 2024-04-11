@@ -12,7 +12,7 @@ const CommunitiesPage = () => {
         <AuthorizedLayout>
             <h1>Communities</h1>
             <ButtonGroup>
-                <Button color="primary">Suchen</Button>
+                <Button color="primary" onClick={() => router.push("/communities/search")}>Suchen</Button>
                 <Button color="primary" onClick={() => router.push("/communities/create")}>Erstellen</Button>
             </ButtonGroup>
         </AuthorizedLayout>
