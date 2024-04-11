@@ -109,6 +109,15 @@ class CommunityService : AbstractService() {
     }
 
     /**
+     * Gets personal communities by username
+     *
+     * @param username The username of the user
+     */
+    fun getPersonalCommunities(username: String): List<CommunityResponse> {
+        return this.communityRepository.findPersonalCommunities(username).map { this.convertToList(it) }
+    }
+
+    /**
      * Converts to extended community response
      *
      * @param community The community

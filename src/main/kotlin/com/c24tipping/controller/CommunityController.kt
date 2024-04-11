@@ -56,6 +56,15 @@ class CommunityController {
     }
 
     /**
+     * Gets all personal responses of a user
+     */
+    @GET
+    @Path("/personal")
+    fun getPersonalCommunities(@QueryParam("username") username: String): Response {
+        return Response.ok(this.communityService.getPersonalCommunities(username)).build();
+    }
+
+    /**
      * Creates a new community
      */
     @POST

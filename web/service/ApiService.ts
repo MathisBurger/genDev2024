@@ -94,6 +94,12 @@ class ApiService {
         return await ApiService.get<ExtendedCommunity>(`/api/communities/${id}`) as ApiResponse<ExtendedCommunity>;
     }
 
+    /**
+     * Gets all personal communities
+     */
+    public async getPersonalCommunities(): Promise<ApiResponse<Community[]>> {
+        return await ApiService.get<Community[]>(`/api/communities/personal?username=${this.username}`) as ApiResponse<Community[]>;
+    }
 
     /**
      * GET method

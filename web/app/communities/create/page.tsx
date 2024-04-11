@@ -5,7 +5,8 @@ import useApiService from "@/hooks/useApiService";
 import {FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import useSnackbar from "@/hooks/useSnackbar";
-import {ExtendedCommunity} from "@/typings/community";
+import {Community, ExtendedCommunity} from "@/typings/community";
+import usePersonalCommunities from "@/hooks/usePersonalCommunities";
 
 
 const CreatePage = () => {
@@ -13,6 +14,7 @@ const CreatePage = () => {
     const apiService = useApiService();
     const router = useRouter();
     const snackbar = useSnackbar();
+    const {setter} = usePersonalCommunities();
 
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -21,6 +23,8 @@ const CreatePage = () => {
         if (resp.status !== 200) {
             snackbar.error(resp.data as string);
         } else {
+            const personalComms = await apiService.getPersonalCommunities();
+            setter(personalComms.data as Community[]);
             router.push(`/communities/details?id=${(resp.data as ExtendedCommunity).id}`);
         }
     }

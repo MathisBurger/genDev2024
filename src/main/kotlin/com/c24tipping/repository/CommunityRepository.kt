@@ -48,4 +48,13 @@ class CommunityRepository : PanacheRepository<Community> {
             return find("", Sort.by("name", Sort.Direction.Descending)).page<Community>(Page.of(pageNr, pageSize)).list();
         }
     }
+
+    /**
+     * Finds personal communities by username
+     *
+     * @param username The username of the user
+     */
+    fun findPersonalCommunities(username: String): List<Community> {
+        return find("FROM Community c JOIN c.members m WHERE m.username = ?1", username).list();
+    }
 }

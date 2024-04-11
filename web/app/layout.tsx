@@ -6,6 +6,7 @@ import React, {useEffect, useMemo, useState} from "react";
 import {useCookies} from "react-cookie";
 import {usePathname, useRouter} from "next/navigation";
 import {unauthorizedLocations} from "@/auth";
+import PersonalCommunitiesWrapper from "@/components/PersonalCommunitiesWrapper";
 
 export default function RootLayout({
   children,
@@ -37,7 +38,9 @@ export default function RootLayout({
         <SnackbarProvider maxSnack={5} anchorOrigin={{ horizontal: "right", vertical: "bottom" }}>
             <div>
                 <API_SERVICE_CONTEXT.Provider value={apiService}>
-                    {children}
+                    <PersonalCommunitiesWrapper>
+                        {children}
+                    </PersonalCommunitiesWrapper>
                 </API_SERVICE_CONTEXT.Provider>
             </div>
         </SnackbarProvider>
