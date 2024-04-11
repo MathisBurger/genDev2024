@@ -27,7 +27,7 @@ const GameCard = ({game}: GameCardProps) => {
                     <Grid xs={10}>
                         <p style={{textAlign: "center"}}>{new Date(game.startsAt).toLocaleDateString("de-DE")} {new Date(game.startsAt).toLocaleTimeString("de-DE")}</p>
                     </Grid>
-                    {(!getter.map((b) => b.game.id).includes(game.id) || new Date().getTime() < new Date(game.startsAt).getTime()) && (
+                    {(!getter.map((b) => b.game.id).includes(game.id) && new Date().getTime() < new Date(game.startsAt).getTime()) && (
                         <Grid xs={3}>
                             <Button
                                 fullWidth

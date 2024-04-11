@@ -12,6 +12,7 @@ import com.c24tipping.utils.BetUtil
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.transaction.Transactional
+import java.util.Date
 
 /**
  * The service for handling all bet transactions
@@ -58,6 +59,9 @@ class BetService : AbstractService() {
         val user = this.userRepository.findByUsername(username);
         if (user.isEmpty) {
             throw UnknownUserException("Der Nutzer existiert nicht")
+        }
+        if (Date().time > game.get().startsAt!!.time) {
+            throw BetException("Sie können nur bis zu Beginn des Spiels wetten");
         }
         val bet = Bet();
         bet.goalsHome = homeGoals;
