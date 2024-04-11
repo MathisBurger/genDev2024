@@ -3,6 +3,7 @@ package com.c24tipping.entity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.ManyToMany
+import jakarta.persistence.OneToMany
 
 /**
  * User entity that is used for login
@@ -21,5 +22,11 @@ class User : AbstractEntity() {
      */
     @ManyToMany(mappedBy = "members")
     var communities: MutableList<Community> = mutableListOf();
+
+    /**
+     * All bets the user has made
+     */
+    @OneToMany
+    var bets: MutableList<Bet> = mutableListOf();
 
 }
