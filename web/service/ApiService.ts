@@ -63,16 +63,17 @@ class ApiService {
      *
      * @param pageSize The size of the page
      * @param pageNr The number of the page
+     * @param search The search query
      */
-    public async getAllCommunities(pageSize: number, pageNr: number): Promise<ApiResponse<Community[]>> {
-        return await ApiService.get<Community[]>(`/api/communities?pageNr=${pageNr}&pageSize=${pageSize}`) as ApiResponse<Community[]>;
+    public async getAllCommunities(pageSize: number, pageNr: number, search?: string): Promise<ApiResponse<Community[]>> {
+        return await ApiService.get<Community[]>(`/api/communities?pageNr=${pageNr}&pageSize=${pageSize}${search ? `&search=${search}` : ""}`) as ApiResponse<Community[]>;
     }
 
     /**
      * Gets the amount of communities
      */
-    public async getCommunityCount(): Promise<number> {
-        return parseInt(`${(await ApiService.get<number>("/api/communities/count")).data as string}`, 10);
+    public async getCommunityCount(search?: string): Promise<number> {
+        return parseInt(`${(await ApiService.get<number>(`/api/communities/count${search ? `?search=${search}` : ""}`)).data as string}`, 10);
     }
 
     /**

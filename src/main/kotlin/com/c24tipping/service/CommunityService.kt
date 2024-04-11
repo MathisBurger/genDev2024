@@ -14,6 +14,7 @@ import com.c24tipping.repository.UserRepository
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.transaction.Transactional
+import java.util.Optional
 
 /**
  * The service that handles all community actions.
@@ -33,15 +34,15 @@ class CommunityService : AbstractService() {
      * @param pageSize The size of a page
      * @param pageNr The number of the page
      */
-    fun getAllCommunities(pageSize: Int, pageNr: Int): List<CommunityResponse> {
-        return this.communityRepository.pageCommunities(pageSize, pageNr).map { this.convertToList(it) };
+    fun getAllCommunities(pageSize: Int, pageNr: Int, search: Optional<String>): List<CommunityResponse> {
+        return this.communityRepository.pageCommunities(pageSize, pageNr, search).map { this.convertToList(it) };
     }
 
     /**
      * Gets the count of rows
      */
-    fun getCommunityRowCount(): Int {
-        return this.communityRepository.getElementCount();
+    fun getCommunityRowCount(search: Optional<String>): Long {
+        return this.communityRepository.getElementCount(search);
     }
 
     /**

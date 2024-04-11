@@ -8,6 +8,7 @@ import jakarta.inject.Inject
 import jakarta.ws.rs.*
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
+import java.util.Optional
 
 /**
  * Handles community request
@@ -22,9 +23,9 @@ class CommunityController {
      * Pages all communities
      */
     @GET
-    fun getAllCommunities(@QueryParam("pageSize") pageSize: Int, @QueryParam("pageNr") pageNr: Int): Response {
+    fun getAllCommunities(@QueryParam("pageSize") pageSize: Int, @QueryParam("pageNr") pageNr: Int, @QueryParam("search") search: Optional<String>): Response {
         try {
-            return Response.ok(this.communityService.getAllCommunities(pageSize, pageNr)).build();
+            return Response.ok(this.communityService.getAllCommunities(pageSize, pageNr, search)).build();
         } catch (e: Exception) {
             return Response.status(400).entity(e.message).build();
         }
@@ -50,8 +51,8 @@ class CommunityController {
      */
     @GET
     @Path("/count")
-    fun getAmountOfCommunities(): Response {
-        return Response.ok(this.communityService.getCommunityRowCount()).build();
+    fun getAmountOfCommunities(@QueryParam("search") search: Optional<String>): Response {
+        return Response.ok(this.communityService.getCommunityRowCount(search)).build();
     }
 
     /**
