@@ -26,8 +26,6 @@ class LeaderboardService : AbstractService() {
             query.setParameter("placement", userIndex+1);
             val res = query.executeUpdate();
         }
-        this.leaderboardSocket.setLeaderboardBroadcast(
-            this.leaderboardRepository.listSorted()
-        );
+        this.leaderboardSocket.sendLeaderboardBroadcast();
     }
 }

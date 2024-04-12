@@ -26,36 +26,19 @@ class LeaderboardSocket {
     @Inject
     lateinit var executor: ExecutorService;
 
-    var sessions: ConcurrentHashMap<String, LeaderboardSessionEntry> = ConcurrentHashMap();
-
-    private var leaderboard: MutableList<LeaderboardEntry>? = null;
-
-    var usernameLeaderboardMap: ConcurrentHashMap<String, Int> = ConcurrentHashMap();
-
-    fun setLeaderboard(list: MutableList<LeaderboardEntry>) {
-        this.leaderboard = list;
-        this.usernameLeaderboardMap = ConcurrentHashMap();
-        for (index in 0..<list.size) {
-            this.usernameLeaderboardMap.put(list.get(index).user!!.username!!, index);
-        }
-    }
+    private var sessions: ConcurrentHashMap<String, LeaderboardSessionEntry> = ConcurrentHashMap();
 
     /**
      * Sends leaderboard broadcast to all users
      */
-    fun setLeaderboardBroadcast(list: MutableList<LeaderboardEntry>) {
-        this.setLeaderboard(list);
-        this.sessions.values.forEach { it.session.asyncRemote.sendObject(this.getLeaderboard(it).toString()) }
+    fun sendLeaderboardBroadcast() {
+        this.sessions.values.forEach { this.executor.submit { this.sendLeaderboard(it) } }
     }
 
     @OnOpen
     fun onOpen(session: Session, @PathParam("username") username: String) {
-        if (this.leaderboard == null) {
-            this.executor.submit { this.initializeLeaderboardAndSendResponse(session, username) }
-        } else {
-            this.sessions[username] = LeaderboardSessionEntry(session, username, mutableListOf(1, this.getLastPageNr()-1));
-            session.asyncRemote.sendObject(this.getLeaderboard(this.sessions[username]!!).toString());
-        }
+            this.sessions[username] = LeaderboardSessionEntry(session, username, mutableListOf(1, -1));
+            this.executor.submit { this.sendLeaderboard(this.sessions[username]!!); }
     }
 
     @OnClose
@@ -77,37 +60,16 @@ class LeaderboardSocket {
                 listOf(spl.get(0).toInt(), spl.get(1).toInt())
             );
             this.sessions[username] = newSession;
-            newSession.session.asyncRemote.sendObject(this.getLeaderboard(newSession));
+            this.executor.submit { this.sendLeaderboard(newSession); }
         }
-    }
-
-    /**
-     * Gets the last leaderboard page
-     */
-    private fun getLastPageNr(): Int {
-        return (this.leaderboard?.size ?: 0) / 10;
-    }
-
-    @ActivateRequestContext
-    fun initializeLeaderboardAndSendResponse(session: Session, username: String) {
-        this.setLeaderboard(this.leaderboardRepository.listAll().sortedBy { it.placement }.toMutableList());
-        this.sessions[username] = LeaderboardSessionEntry(session, username, mutableListOf(1, this.getLastPageNr()-1));
-        session.asyncRemote.sendObject(this.getLeaderboard(this.sessions[username]!!).toString());
     }
 
     /**
      * Gets the leaderboard of a user
      */
-    private fun getLeaderboard(entry: LeaderboardSessionEntry): List<LeaderboardEntry> {
-        val list: MutableList<LeaderboardEntry> = mutableListOf();
-        if (this.leaderboard != null && (this.leaderboard?.size ?: 0) > 0) {
-            list.addAll(this.leaderboard!!.subList(0, entry.pages.get(0)*10));
-            val usernameIndex = this.usernameLeaderboardMap.get(entry.username);
-            if (usernameIndex !== null && usernameIndex > (entry.pages.get(0) * 10)) {
-                list.add(this.leaderboard!!.get(usernameIndex));
-            }
-            list.addAll(this.leaderboard!!.subList(entry.pages.get(1)*10, this.getLastPageNr()*10));
-        }
-        return list;
+    @ActivateRequestContext
+    fun sendLeaderboard(entry: LeaderboardSessionEntry) {
+        val entries = this.leaderboardRepository.getGlobalLeaderboard(entry.username, entry.pages.get(0), entry.pages.get(1));
+        entry.session.asyncRemote.sendObject(entries.toString());
     }
 }
