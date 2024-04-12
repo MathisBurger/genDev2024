@@ -29,4 +29,19 @@ class User : AbstractEntity() {
     @OneToMany
     var bets: MutableList<Bet> = mutableListOf();
 
+    /**
+     * Points of a user
+     */
+    var points: Int = 0;
+
+    /**
+     * Preliminary points
+     */
+    var preliminaryPoints: Int = 0;
+
+    /**
+     * All placements in leaderboards
+     */
+    @OneToMany(mappedBy = "user")
+    var leaderboardPlacements: MutableList<LeaderboardEntry> = mutableListOf();
 }

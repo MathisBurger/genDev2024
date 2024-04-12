@@ -13,3 +13,6 @@ quarkus:
     dialect: org.hibernate.dialect.PostgreSQLDialect
     database:
       generation: update
+
+c24tipping:
+  adminPW: admin123
