@@ -1,12 +1,21 @@
 package com.c24tipping.service
 
 import com.c24tipping.entity.User
+import com.c24tipping.repository.LeaderboardRepository
+import com.c24tipping.websocket.LeaderboardSocket
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.transaction.Transactional
 
 @ApplicationScoped
 class LeaderboardService : AbstractService() {
+
+    @Inject
+    lateinit var leaderboardSocket: LeaderboardSocket;
+
+    @Inject
+    lateinit var leaderboardRepository: LeaderboardRepository;
+
     @Transactional
     fun updateGlobalLeaderboard(users: List<User>) {
         val sortedUsers: List<User> = users.sortedBy { it.preliminaryPoints };
@@ -18,5 +27,8 @@ class LeaderboardService : AbstractService() {
             val res = query.executeUpdate();
             println(res);
         }
+        this.leaderboardSocket.setLeaderboardBroadcast(
+            this.leaderboardRepository.listSorted()
+        );
     }
 }
