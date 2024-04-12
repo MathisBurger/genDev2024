@@ -16,3 +16,4 @@ quarkus:
 
 c24tipping:
   adminPW: admin123
+  loadFixtures: false

@@ -19,7 +19,7 @@ class AdminService : AbstractService() {
     lateinit var gameRepository: GameRepository;
 
     @Inject
-    lateinit var leaderboardSocket: LeaderboardSocket;
+    lateinit var leaderboardService: LeaderboardService;
 
     @ConfigProperty(name = "c24tipping.adminPW")
     lateinit var adminPW: String;
@@ -43,8 +43,9 @@ class AdminService : AbstractService() {
         this.entityManager.flush();
 
         val users: MutableList<User> = mutableListOf();
-
+        println(game.bets.size)
         for (bet in game.bets) {
+            //println(bet.user?.username);
             bet.betPoints = this.calculateBetPoints(bet, game);
             this.entityManager.persist(bet);
 
@@ -63,6 +64,7 @@ class AdminService : AbstractService() {
         }
         this.entityManager.flush();
 
+        this.leaderboardService.updateGlobalLeaderboard(users);
         // TODO: Update leaderboards
         // Every leaderboard stores the leaderboard itself in the socket class, so the data is persisted after updating within the socket
 
@@ -80,7 +82,7 @@ class AdminService : AbstractService() {
         if (bet.goalsAway == game.goalsAway && bet.goalsHome == game.goalsHome) {
             return 8;
         }
-        if ((bet.goalsAway?.minus(bet.goalsHome!!)) == bet.goalsHome?.minus(game.goalsHome!!)) {
+        if ((bet.goalsAway!! - bet.goalsHome!!) == (bet.game!!.goalsAway!! - bet.game!!.goalsHome!!) && bet.goalsHome!! != bet.goalsAway!!) {
             return 6;
         }
         if (bet.goalsAway!! > bet.goalsHome!! && game.goalsAway!! > game.goalsHome!!) {

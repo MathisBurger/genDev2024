@@ -1,5 +1,6 @@
 package com.c24tipping.service
 
+import com.c24tipping.entity.LeaderboardEntry
 import com.c24tipping.entity.User
 import com.c24tipping.exception.UserExistsException
 import com.c24tipping.repository.UserRepository
@@ -27,6 +28,11 @@ class UserService : AbstractService() {
         }
         val newUser = User()
         newUser.username = username;
+        this.entityManager.persist(newUser);
+        val lbe = LeaderboardEntry()
+        lbe.user = newUser;
+        lbe.placement = (this.userRepository.count()).toInt();
+        this.entityManager.persist(lbe);
         this.entityManager.persist(newUser);
         this.entityManager.flush();
         return newUser;

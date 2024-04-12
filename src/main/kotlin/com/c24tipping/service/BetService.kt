@@ -11,6 +11,7 @@ import com.c24tipping.repository.UserRepository
 import com.c24tipping.utils.BetUtil
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
+import jakarta.persistence.PersistenceException
 import jakarta.transaction.Transactional
 import java.util.Date
 

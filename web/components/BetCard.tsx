@@ -22,7 +22,7 @@ const BetCard = ({bet}: BetCardProps) => {
                     <Grid xs={9} sx={{padding: 0}}>
                         <h2 style={{margin: 0, padding: 0, textAlign: "center"}}>{bet.goalsHome} : {bet.goalsAway}</h2>
                     </Grid>
-                    {bet.game.goalsAway && (
+                    {bet.game.goalsAway !== undefined && (
                         <>
                             <Divider />
                             <Grid xs={9} sx={{padding: 0}}>

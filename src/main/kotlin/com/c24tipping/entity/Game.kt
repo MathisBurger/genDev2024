@@ -1,6 +1,7 @@
 package com.c24tipping.entity
 
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.OneToMany
 import java.util.Date
 
@@ -38,7 +39,7 @@ class Game : AbstractEntity() {
     /**
      * All bets on this game
      */
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     var bets: MutableList<Bet> = mutableListOf();
 
     /**

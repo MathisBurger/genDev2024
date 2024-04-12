@@ -1,14 +1,29 @@
 'use client';
 import AuthorizedLayout from "@/components/AuthorizedLayout";
 import usePersonalBets from "@/hooks/usePersonalBets";
-import {Divider, Grid} from "@mui/joy";
-import GameCard from "@/components/GameCard";
+import {Grid} from "@mui/joy";
 import BetCard from "@/components/BetCard";
+import useApiService from "@/hooks/useApiService";
+import {useEffect} from "react";
+import ResponseCode from "@/service/ResponseCode";
+import {PersonalBet} from "@/typings/bet";
 
 
 const BetsPage = () => {
 
-    const {getter} = usePersonalBets();
+    const {getter, setter} = usePersonalBets();
+    const apiService = useApiService();
+
+    useEffect(() => {
+        const fetcher = async () => {
+            const resp = await apiService.getPersonalBets();
+            if (resp.status === ResponseCode.OK) {
+                console.log(resp);
+                setter(resp.data as PersonalBet[]);
+            }
+        }
+        fetcher();
+    }, [apiService]);
 
 
 
@@ -19,7 +34,7 @@ const BetsPage = () => {
                 <Grid xs={7}><h1 style={{textAlign: 'center'}}>Wetten</h1></Grid>
                 <Grid xs={6}>
                     <Grid xs={6} container direction="column" spacing={2}>
-                        {getter.reverse().map((bet) => (
+                        {(getter ?? []).reverse().map((bet) => (
                             <Grid xs={12}>
                                 <BetCard bet={bet} />
                             </Grid>
