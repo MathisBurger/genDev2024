@@ -14,21 +14,26 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
 
-    const [cookies, setCookie] = useCookies(['application_user']);
+    const [cookies, setCookie] = useCookies(['application_user', 'admin_pw']);
     const router = useRouter();
     const pathname = usePathname();
 
     const apiService = useMemo<ApiService>(() => {
-        const cookie = cookies.application_user as string;
-        return new ApiService(cookie);
+        const cookie = cookies.application_user as string|null|undefined;
+        const adminPW = cookies.admin_pw as string|null|undefined;
+        return new ApiService(cookie, adminPW);
     }, [cookies]);
 
     const isLoggedIn = useMemo(() => apiService.isLoggedIn(), [apiService]);
+    const isLoggedInAdmin = useMemo(() => apiService.isLoggedInAdmin(), [apiService]);
+
 
     useEffect(() => {
-        console.log(isLoggedIn);
         if (!isLoggedIn && !unauthorizedLocations.includes(pathname)) {
             router.push("/login");
+        }
+        if (pathname.startsWith("/admin") && !isLoggedInAdmin) {
+            router.push("/admin/login");
         }
     }, [router, isLoggedIn, unauthorizedLocations, pathname]);
 

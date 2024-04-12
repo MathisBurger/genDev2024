@@ -2,7 +2,7 @@
 import {MinifiedGame} from "@/typings/game";
 import {Button, Card, CardContent, Grid} from "@mui/joy";
 import usePersonalBets from "@/hooks/usePersonalBets";
-import {useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 
 
 interface GameCardProps {
@@ -13,6 +13,7 @@ const GameCard = ({game}: GameCardProps) => {
 
     const {getter} = usePersonalBets();
     const router = useRouter();
+    const pathname = usePathname();
 
     return (
         <Card>
@@ -27,12 +28,20 @@ const GameCard = ({game}: GameCardProps) => {
                     <Grid xs={10}>
                         <p style={{textAlign: "center"}}>{new Date(game.startsAt).toLocaleDateString("de-DE")} {new Date(game.startsAt).toLocaleTimeString("de-DE")}</p>
                     </Grid>
-                    {(!getter.map((b) => b.game.id).includes(game.id) && new Date().getTime() < new Date(game.startsAt).getTime()) && (
+                    {(!getter.map((b) => b.game.id).includes(game.id) && new Date().getTime() < new Date(game.startsAt).getTime() && !pathname.startsWith("/admin")) && (
                         <Grid xs={3}>
                             <Button
                                 fullWidth
                                 onClick={() => router.push(`/bets/place?gameId=${game.id}&gameName=${game.teamHome + " gegen " + game.teamAway}`)}
                             >Wette platzieren</Button>
+                        </Grid>
+                    )}
+                    {pathname === "/admin" && (
+                        <Grid xs={3}>
+                            <Button
+                                fullWidth
+                                onClick={() => router.push(`/admin/updateGame?gameId=${game.id}&gameName=${game.teamHome + " gegen " + game.teamAway}&homeGoals=${game.goalsHome}&awayGoals=${game.goalsAway}`)}
+                            >Spiel aktualisieren</Button>
                         </Grid>
                     )}
                 </Grid>

@@ -16,7 +16,7 @@ class GameService : AbstractService() {
      * Gets all games
      */
     fun getAllGames(): List<MinifiedGame> {
-        return this.gameRepository.listAll().map { GameUtil.convertToMinified(it) };
+        return this.gameRepository.listAllGames().map { GameUtil.convertToMinified(it) };
     }
 
 

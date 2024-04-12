@@ -1,7 +1,7 @@
 /**
  * Locations that do not require auth
  */
-export const unauthorizedLocations = ["/login", "/register"];
+export const unauthorizedLocations = ["/login", "/register", "/admin", "/admin/login", "/admin/updateGame"];
 
 /**
  * Maximum session duration in ms

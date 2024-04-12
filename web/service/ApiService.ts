@@ -12,9 +12,11 @@ export interface ApiResponse<T> {
 class ApiService {
 
     private username: string|null;
+    private password: string|null;
 
-    constructor(username?: string|null) {
+    constructor(username?: string|null, password?: string|null) {
         this.username = username ?? null;
+        this.password = password ?? null;
     }
 
     /**
@@ -26,8 +28,21 @@ class ApiService {
         this.username = username;
     }
 
+    /**
+     * Sets the password
+     *
+     * @param password The password
+     */
+    public setPassword(password: string) {
+        this.password = password;
+    }
+
     public isLoggedIn(): boolean {
         return this.username !== null;
+    }
+
+    public isLoggedInAdmin(): boolean {
+        return this.password !== null;
     }
 
     /**
@@ -123,6 +138,26 @@ class ApiService {
 
     public async getAllGames(): Promise<ApiResponse<MinifiedGame[]>> {
         return await ApiService.get<MinifiedGame[]>("/api/games");
+    }
+
+    /**
+     * Logs in the user into the admin UI
+     *
+     * @param password The admin PW
+     */
+    public async adminLogin(password: string): Promise<ApiResponse<never>> {
+        return await ApiService.post<never>("/api/admin/login", {password});
+    }
+
+    /**
+     * Updates a game in the admin UI
+     *
+     * @param gameId The id of the game
+     * @param goalsHome All home goals
+     * @param goalsAway All away goals
+     */
+    public async updateGame(gameId: number, goalsHome: number, goalsAway: number): Promise<ApiResponse<string>> {
+        return await ApiService.post<string>("/api/admin/updateGame", {password: this.password, gameId, goalsHome, goalsAway});
     }
 
     /**
