@@ -4,6 +4,7 @@ import com.c24tipping.entity.LeaderboardEntry
 import com.c24tipping.repository.LeaderboardRepository
 import com.c24tipping.websocket.data.LeaderboardSessionEntry
 import jakarta.enterprise.context.ApplicationScoped
+import jakarta.enterprise.context.control.ActivateRequestContext
 import jakarta.inject.Inject
 import jakarta.websocket.OnClose
 import jakarta.websocket.OnMessage
@@ -12,6 +13,7 @@ import jakarta.websocket.Session
 import jakarta.websocket.server.PathParam
 import jakarta.websocket.server.ServerEndpoint
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ExecutorService
 
 
 @ApplicationScoped
@@ -21,9 +23,12 @@ class LeaderboardSocket {
     @Inject
     lateinit var leaderboardRepository: LeaderboardRepository;
 
+    @Inject
+    lateinit var executor: ExecutorService;
+
     var sessions: ConcurrentHashMap<String, LeaderboardSessionEntry> = ConcurrentHashMap();
 
-    var leaderboard: MutableList<LeaderboardEntry>? = null;
+    private var leaderboard: MutableList<LeaderboardEntry>? = null;
 
     var usernameLeaderboardMap: ConcurrentHashMap<String, Int> = ConcurrentHashMap();
 
@@ -40,13 +45,17 @@ class LeaderboardSocket {
      */
     fun setLeaderboardBroadcast(list: MutableList<LeaderboardEntry>) {
         this.setLeaderboard(list);
-        this.sessions.values.forEach { it.session.asyncRemote.sendObject(this.getLeaderboard(it)) }
+        this.sessions.values.forEach { it.session.asyncRemote.sendObject(this.getLeaderboard(it).toString()) }
     }
 
     @OnOpen
     fun onOpen(session: Session, @PathParam("username") username: String) {
-        this.sessions[username] = LeaderboardSessionEntry(session, username, mutableListOf(1, this.getLastPageNr()-1));
-        session.asyncRemote.sendObject(this.getLeaderboard(this.sessions[username]!!));
+        if (this.leaderboard == null) {
+            this.executor.submit { this.initializeLeaderboardAndSendResponse(session, username) }
+        } else {
+            this.sessions[username] = LeaderboardSessionEntry(session, username, mutableListOf(1, this.getLastPageNr()-1));
+            session.asyncRemote.sendObject(this.getLeaderboard(this.sessions[username]!!).toString());
+        }
     }
 
     @OnClose
@@ -76,10 +85,14 @@ class LeaderboardSocket {
      * Gets the last leaderboard page
      */
     private fun getLastPageNr(): Int {
-        if (this.leaderboard == null) {
-            this.setLeaderboard(this.leaderboardRepository.listAll().sortedBy { it.placement }.toMutableList());
-        }
         return (this.leaderboard?.size ?: 0) / 10;
+    }
+
+    @ActivateRequestContext
+    fun initializeLeaderboardAndSendResponse(session: Session, username: String) {
+        this.setLeaderboard(this.leaderboardRepository.listAll().sortedBy { it.placement }.toMutableList());
+        this.sessions[username] = LeaderboardSessionEntry(session, username, mutableListOf(1, this.getLastPageNr()-1));
+        session.asyncRemote.sendObject(this.getLeaderboard(this.sessions[username]!!).toString());
     }
 
     /**
@@ -87,12 +100,14 @@ class LeaderboardSocket {
      */
     private fun getLeaderboard(entry: LeaderboardSessionEntry): List<LeaderboardEntry> {
         val list: MutableList<LeaderboardEntry> = mutableListOf();
-        list.addAll(this.leaderboard!!.subList(0, entry.pages.get(0)));
-        val usernameIndex = this.usernameLeaderboardMap.get(entry.username);
-        if (usernameIndex !== null && usernameIndex > (entry.pages.get(0) * 10)) {
-            list.add(this.leaderboard!!.get(usernameIndex));
+        if (this.leaderboard != null && (this.leaderboard?.size ?: 0) > 0) {
+            list.addAll(this.leaderboard!!.subList(0, entry.pages.get(0)*10));
+            val usernameIndex = this.usernameLeaderboardMap.get(entry.username);
+            if (usernameIndex !== null && usernameIndex > (entry.pages.get(0) * 10)) {
+                list.add(this.leaderboard!!.get(usernameIndex));
+            }
+            list.addAll(this.leaderboard!!.subList(entry.pages.get(1)*10, this.getLastPageNr()*10));
         }
-        list.addAll(this.leaderboard!!.subList(entry.pages.get(1)*10, this.getLastPageNr()*10));
         return list;
     }
 }

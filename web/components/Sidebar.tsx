@@ -19,6 +19,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import {useCookies} from "react-cookie";
 import SportsSoccerIcon from '@mui/icons-material/SportsSoccer';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 
 /**
  * The sidebar
@@ -132,6 +133,14 @@ const Sidebar = () => {
                             <AttachMoneyIcon />
                             <ListItemContent>
                                 <Typography level="title-sm">Wetten</Typography>
+                            </ListItemContent>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem>
+                        <ListItemButton onClick={() => router.push("/leaderboard")}>
+                            <LeaderboardIcon />
+                            <ListItemContent>
+                                <Typography level="title-sm">Leaderboard</Typography>
                             </ListItemContent>
                         </ListItemButton>
                     </ListItem>

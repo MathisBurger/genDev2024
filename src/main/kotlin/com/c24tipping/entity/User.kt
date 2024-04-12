@@ -44,4 +44,8 @@ class User : AbstractEntity() {
      */
     @OneToMany(mappedBy = "user")
     var leaderboardPlacements: MutableList<LeaderboardEntry> = mutableListOf();
+
+    override fun toString(): String {
+        return buildJSON(this, listOf("communities", "bets", "leaderboardPlacements"))
+    }
 }

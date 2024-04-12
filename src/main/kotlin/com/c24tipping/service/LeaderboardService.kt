@@ -25,7 +25,6 @@ class LeaderboardService : AbstractService() {
             query.setParameter("user", sortedUsers.get(userIndex));
             query.setParameter("placement", userIndex);
             val res = query.executeUpdate();
-            println(res);
         }
         this.leaderboardSocket.setLeaderboardBroadcast(
             this.leaderboardRepository.listSorted()

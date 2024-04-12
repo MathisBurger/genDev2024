@@ -19,4 +19,9 @@ class LeaderboardEntry : AbstractEntity() {
      */
     @ManyToOne
     var user: User? = null;
+
+
+    override fun toString(): String {
+        return buildJSON(this, listOf());
+    }
 }
