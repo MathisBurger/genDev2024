@@ -18,12 +18,12 @@ class LeaderboardService : AbstractService() {
 
     @Transactional
     fun updateGlobalLeaderboard(users: List<User>) {
-        val sortedUsers: List<User> = users.sortedBy { it.preliminaryPoints };
+        val sortedUsers: List<User> = users.sortedBy { it.preliminaryPoints }.reversed();
         for (userIndex in sortedUsers.indices) {
             val hql = "UPDATE LeaderboardEntry as l SET l.user=:user WHERE l.placement=:placement";
             val query = this.entityManager.createQuery(hql);
             query.setParameter("user", sortedUsers.get(userIndex));
-            query.setParameter("placement", userIndex);
+            query.setParameter("placement", userIndex+1);
             val res = query.executeUpdate();
         }
         this.leaderboardSocket.setLeaderboardBroadcast(

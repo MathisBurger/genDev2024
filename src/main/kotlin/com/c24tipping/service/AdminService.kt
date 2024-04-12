@@ -44,7 +44,6 @@ class AdminService : AbstractService() {
 
         val users: MutableList<User> = mutableListOf();
         for (bet in game.bets) {
-            //println(bet.user?.username);
             bet.betPoints = this.calculateBetPoints(bet, game);
             this.entityManager.persist(bet);
 
