@@ -68,6 +68,12 @@ class LeaderboardService : AbstractService() {
         })
     }
 
+    /**
+     * Updates the database entries
+     *
+     * @param users All users sorted
+     * @param community The community if given
+     */
     @Transactional
     fun databaseUpdate(users: List<User>, community: Community? = null) {
         for (userIndex in users.indices) {

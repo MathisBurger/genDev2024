@@ -10,6 +10,8 @@ import {Button, Grid} from "@mui/joy";
 import usePersonalCommunities from "@/hooks/usePersonalCommunities";
 import ResponseCode from "@/service/ResponseCode";
 import useSnackbar from "@/hooks/useSnackbar";
+import LeaderboardComponent, {LeaderboardElement} from "@/components/LeaderboardComponent";
+import {useCookies} from "react-cookie";
 
 
 const DetailsPage = () => {
@@ -19,6 +21,26 @@ const DetailsPage = () => {
     const [community, setCommunity] = useState<ExtendedCommunity|null>(null);
     const {getter, setter} = usePersonalCommunities();
     const snackbar = useSnackbar();
+    const [cookies] = useCookies(['application_user']);
+    const [leaderboardElements, setElements] = useState<LeaderboardElement[]>([]);
+    const [socket, setSocket] = useState<WebSocket|null>(null);
+
+    useEffect(() => {
+        const socket = new WebSocket(`ws://localhost:8080/api/socket/community/${id}/${cookies.application_user}`);
+        socket.onopen = () => {
+            console.log("opened socket");
+        }
+        socket.onmessage = (m) => {
+            setElements(JSON.parse(m.data));
+        }
+        setSocket(socket);
+    }, []);
+
+    const onPageChange = (top: number, bottom: number) => {
+        if (socket !== null) {
+            socket.send(`${top},${bottom}`);
+        }
+    }
 
     useEffect(() => {
         const fetcher = async () => {
@@ -68,6 +90,11 @@ const DetailsPage = () => {
                         </Grid>
                         <Grid xs={9}>
                             <h2>Leaderboard</h2>
+                            <LeaderboardComponent
+                                elements={leaderboardElements}
+                                topPageIncrease={() => onPageChange(1,0)}
+                                bottomPageIncrease={() => onPageChange(0,-1)}
+                            />
                         </Grid>
                     </Grid>
                 </>

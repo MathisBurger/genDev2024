@@ -61,7 +61,7 @@ class LeaderboardRepository : PanacheRepository<LeaderboardEntry> {
      */
     private fun getPageLimit(pageNr: Int, count: Long, pageType: Int): Int {
         if (pageNr == (count / 10).toInt()-1) {
-            return (pageNr+1) *10 -3;
+            return (pageNr+1) *10 -1;
         }
         if (pageNr == 1) {
             return 4;
@@ -69,7 +69,7 @@ class LeaderboardRepository : PanacheRepository<LeaderboardEntry> {
         if (pageType == 1) {
             return (pageNr-1)*10+4;
         }
-        return (count-3+(pageNr+1)*10).toInt();
+        return (count-1+(pageNr+1)*10).toInt();
     }
 
     /**

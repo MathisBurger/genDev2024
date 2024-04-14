@@ -25,13 +25,23 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease}: L
     const [cookies] = useCookies(['application_user']);
 
     const topElements = useMemo<LeaderboardElement[]>(() => {
-        const filtered= [];
+        const filtered: LeaderboardElement[] = [];
         let i = 0;
-        while (elements.length-1 > i+1 && i+1 === elements[i].placement) {
-            filtered.push(elements[i]);
+        while (
+            elements.length > i+1
+            && (
+                i+1 === elements[i].placement
+                || (i-1 >= 0 && elements[i-1].user.preliminaryPoints === elements[i].user.preliminaryPoints)
+            )
+            ) {
+            if (i-1 >= 0 && elements[i-1].user.preliminaryPoints === elements[i].user.preliminaryPoints) {
+                filtered.push({...elements[i], placement: filtered[i-1].placement});
+            } else {
+                filtered.push(elements[i]);
+            }
             i++;
         }
-        return filtered;
+        return filtered.splice(0, filtered.length-(filtered.length % 10 -3));
     }, [elements]);
 
     const bottomElements = useMemo<LeaderboardElement[]>(() => {
@@ -48,7 +58,16 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease}: L
     }, [elements]);
 
     const youElement = useMemo<LeaderboardElement[]>(
-        () => elements.filter((e) => e.user.username === cookies.application_user),
+        () => {
+            const youElements = elements.filter((e) => !topElements.map(el => el.user.username).includes(e.user.username) && !bottomElements.map(el => el.user.username).includes(e.user.username));
+            if (youElements.length === 0) {
+                return [];
+            }
+            if (youElements[0].user.preliminaryPoints === topElements[topElements.length-1].user.preliminaryPoints) {
+                return [{...youElements[0], placement: topElements[topElements.length-1].placement}]
+            }
+            return youElements;
+        },
         [elements, topElements, bottomElements]);
 
 
