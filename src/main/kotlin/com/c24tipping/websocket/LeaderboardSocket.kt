@@ -57,7 +57,10 @@ class LeaderboardSocket {
             val newSession = LeaderboardSessionEntry(
                 session.session,
                 session.username,
-                listOf(spl.get(0).toInt(), spl.get(1).toInt())
+                listOf(
+                    session.pages.get(0)+spl.get(0).toInt(),
+                    session.pages.get(1)+spl.get(1).toInt()
+                )
             );
             this.sessions[username] = newSession;
             this.executor.submit { this.sendLeaderboard(newSession); }

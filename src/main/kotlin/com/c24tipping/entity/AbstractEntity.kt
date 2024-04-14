@@ -27,7 +27,11 @@ abstract class AbstractEntity {
             builder.append("{");
             for (i in 0..wantedFields.lastIndex) {
                 builder.append("\"${wantedFields[i].name}\":");
-                builder.append("\"${wantedFields[i].get(obj).toString()}\"");
+                if (wantedFields[i].type.toString().equals("class java.lang.String")) {
+                    builder.append("\"${wantedFields[i].get(obj).toString()}\"");
+                } else {
+                    builder.append(wantedFields[i].get(obj).toString());
+                }
                 if (i < wantedFields.lastIndex) {
                     builder.append(",");
                 }

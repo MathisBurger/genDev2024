@@ -64,7 +64,6 @@ class AdminService : AbstractService() {
 
         this.leaderboardService.updateGlobalLeaderboard(users);
         // TODO: Update leaderboards
-        // Every leaderboard stores the leaderboard itself in the socket class, so the data is persisted after updating within the socket
 
 
         // game -> bets -> users -> communities
