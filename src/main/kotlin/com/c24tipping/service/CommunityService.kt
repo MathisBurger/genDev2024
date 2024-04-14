@@ -6,6 +6,7 @@ import com.c24tipping.data.response.CommunityMember
 import com.c24tipping.data.response.CommunityResponse
 import com.c24tipping.data.response.ExtendedCommunityResponse
 import com.c24tipping.entity.Community
+import com.c24tipping.entity.LeaderboardEntry
 import com.c24tipping.exception.TooManyCommunitiesException
 import com.c24tipping.exception.UnknownCommunityException
 import com.c24tipping.exception.UnknownUserException
@@ -27,6 +28,9 @@ class CommunityService : AbstractService() {
 
     @Inject
     lateinit var userRepository: UserRepository;
+
+    @Inject
+    lateinit var leaderboardService: LeaderboardService;
 
     /**
      * Gets all communities
@@ -66,6 +70,17 @@ class CommunityService : AbstractService() {
         user.get().communities.add(community);
         this.entityManager.persist(user.get());
         this.entityManager.flush();
+
+        val firstLBE = LeaderboardEntry()
+        firstLBE.placement = 1;
+        firstLBE.community = community;
+        firstLBE.user = user.get();
+        this.entityManager.persist(firstLBE);
+        user.get().leaderboardPlacements.add(firstLBE);
+        this.entityManager.persist(user.get());
+        community.leaderboard.add(firstLBE);
+        this.entityManager.persist(community);
+        this.entityManager.flush();
         return this.convertToExtended(community);
     }
 
@@ -91,6 +106,13 @@ class CommunityService : AbstractService() {
         user.get().communities.add(community.get());
         this.entityManager.persist(community.get());
         this.entityManager.persist(user.get());
+        this.entityManager.flush();
+        val lbe = LeaderboardEntry()
+        lbe.community = community.get();
+        lbe.placement = community.get().members.size;
+        this.entityManager.persist(lbe);
+        community.get().leaderboard.add(lbe);
+        this.entityManager.persist(community.get());
         this.entityManager.flush();
         return this.convertToExtended(community.get());
     }

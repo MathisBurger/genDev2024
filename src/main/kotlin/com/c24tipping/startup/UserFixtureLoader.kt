@@ -1,10 +1,14 @@
 package com.c24tipping.startup
 
+import com.c24tipping.data.request.JoinCommunityRequest
 import com.c24tipping.entity.Bet
+import com.c24tipping.entity.Community
 import com.c24tipping.entity.LeaderboardEntry
 import com.c24tipping.entity.User
+import com.c24tipping.repository.CommunityRepository
 import com.c24tipping.repository.GameRepository
 import com.c24tipping.repository.UserRepository
+import com.c24tipping.service.CommunityService
 import io.quarkus.runtime.Startup
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
@@ -28,11 +32,28 @@ class UserFixtureLoader {
     @Inject
     lateinit var gameRepository: GameRepository;
 
+    @Inject
+    lateinit var communityRepository: CommunityRepository;
+
+    @Inject
+    lateinit var communityService: CommunityService;
+
     @Startup
     @Transactional
     fun loadFixtures() {
         val games = this.gameRepository.listAllGames();
         if (this.loadFixtures.equals("true") && games.isNotEmpty()) {
+            if (this.communityRepository.find("name", "oddComm").firstResultOptional<Community>().isEmpty) {
+                val oddComm = Community();
+                oddComm.name = "oddComm";
+                val evenComm = Community();
+                evenComm.name = "evenComm";
+                this.entityManager.persist(oddComm);
+                this.entityManager.persist(evenComm);
+                this.entityManager.flush();
+            }
+            val oddComm = this.communityRepository.find("name", "oddComm").firstResult<Community>();
+            val evenComm = this.communityRepository.find("name", "evenComm").firstResult<Community>();
             for (i in 1..300) {
                 val user = this.userRepository.findByUsername("user-$i");
                 if (user.isEmpty) {
@@ -61,6 +82,13 @@ class UserFixtureLoader {
                     this.entityManager.persist(usr);
                     this.entityManager.persist(games.get(0));
                     this.entityManager.flush();
+
+                    if (i % 2 == 0) {
+                        this.communityService.joinCommunity(JoinCommunityRequest(usr.username!!, evenComm.id!!));
+                    } else {
+                        this.communityService.joinCommunity(JoinCommunityRequest(usr.username!!, oddComm.id!!));
+                    }
+
                     println(i);
                 }
             }

@@ -20,8 +20,14 @@ class LeaderboardEntry : AbstractEntity() {
     @ManyToOne
     var user: User? = null;
 
+    /**
+     * The community of an entry
+     */
+    @ManyToOne
+    var community: Community? = null;
+
 
     override fun toString(): String {
-        return buildJSON(this, listOf());
+        return buildJSON(this, listOf("community"));
     }
 }

@@ -1,9 +1,11 @@
 package com.c24tipping.service
 
 import com.c24tipping.entity.Bet
+import com.c24tipping.entity.Community
 import com.c24tipping.entity.Game
 import com.c24tipping.entity.User
 import com.c24tipping.exception.UnauthorizedException
+import com.c24tipping.repository.CommunityRepository
 import com.c24tipping.repository.GameRepository
 import com.c24tipping.websocket.CommunitySocket
 import com.c24tipping.websocket.LeaderboardSocket
@@ -12,11 +14,17 @@ import jakarta.inject.Inject
 import jakarta.transaction.Transactional
 import org.eclipse.microprofile.config.inject.ConfigProperty
 
+/**
+ * Handles admin requests
+ */
 @ApplicationScoped
 class AdminService : AbstractService() {
 
     @Inject
     lateinit var gameRepository: GameRepository;
+
+    @Inject
+    lateinit var communityRepository: CommunityRepository;
 
     @Inject
     lateinit var leaderboardService: LeaderboardService;
@@ -31,6 +39,14 @@ class AdminService : AbstractService() {
         return this.adminPW.equals(adminPW);
     }
 
+    /**
+     * Updates a football game
+     *
+     * @param adminPW the admin password
+     * @param gameId The ID of the game
+     * @param homeGoals The home goals of a game
+     * @param awayGoals The away goals of game
+     */
     @Transactional
     fun updateFootballGame(adminPW: String, gameId: Long, homeGoals: Int, awayGoals: Int) {
         if (!this.adminPW.equals(adminPW)) {
@@ -53,7 +69,6 @@ class AdminService : AbstractService() {
         }
         this.entityManager.flush();
 
-        // Maybe entity manager must be refreshed here
         for (user in users) {
             val currentBets = user.bets.filter { !it.bettingTransactionDone };
             val pointSum = currentBets.sumOf { it.betPoints!! };
@@ -63,10 +78,11 @@ class AdminService : AbstractService() {
         this.entityManager.flush();
 
         this.leaderboardService.updateGlobalLeaderboard(users);
-        // TODO: Update leaderboards
 
-
-        // game -> bets -> users -> communities
+        val communities = this.communityRepository.listAll();
+        for (community in communities) {
+            this.leaderboardService.updateCommunityLeaderboard(community);
+        }
     }
 
     /**

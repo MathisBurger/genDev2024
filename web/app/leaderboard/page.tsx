@@ -18,6 +18,7 @@ const LeaderboardPage = () => {
             console.log("opened socket");
         }
         socket.onmessage = (m) => {
+            console.log(JSON.parse(m.data))
             setElements(JSON.parse(m.data));
         }
         setSocket(socket);

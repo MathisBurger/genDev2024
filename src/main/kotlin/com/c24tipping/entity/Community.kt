@@ -4,6 +4,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
+import jakarta.persistence.OneToMany
 
 /**
  * The entity that represents an community
@@ -24,4 +25,7 @@ class Community : AbstractEntity() {
         joinColumns = [JoinColumn(name = "community_id", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")])
     var members: MutableList<User> = mutableListOf();
+
+    @OneToMany(mappedBy = "community")
+    var leaderboard: MutableList<LeaderboardEntry> = mutableListOf();
 }

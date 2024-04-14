@@ -3,9 +3,9 @@ package com.c24tipping.websocket.data
 import jakarta.websocket.Session
 
 /**
- * Session entry for leaderboard socket
+ * Session entry for community leaderboards
  */
-data class LeaderboardSessionEntry(
+data class CommunityLeaderboardSessionEntry(
     /**
      * The websocket session
      */
@@ -17,5 +17,9 @@ data class LeaderboardSessionEntry(
     /**
      * The pagination pages of the user
      */
-    val pages: List<Int>
+    val pages: List<Int>,
+    /**
+     * The requested community id
+     */
+    val communityId: Long
 )

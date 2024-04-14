@@ -1,6 +1,5 @@
 package com.c24tipping.websocket
 
-import com.c24tipping.entity.LeaderboardEntry
 import com.c24tipping.repository.LeaderboardRepository
 import com.c24tipping.websocket.data.LeaderboardSessionEntry
 import jakarta.enterprise.context.ApplicationScoped
@@ -16,6 +15,9 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ExecutorService
 
 
+/**
+ * Socket that handles global leaderboard
+ */
 @ApplicationScoped
 @ServerEndpoint("/api/socket/leaderboard/{username}")
 class LeaderboardSocket {
@@ -72,7 +74,7 @@ class LeaderboardSocket {
      */
     @ActivateRequestContext
     fun sendLeaderboard(entry: LeaderboardSessionEntry) {
-        val entries = this.leaderboardRepository.getGlobalLeaderboard(entry.username, entry.pages.get(0), entry.pages.get(1));
+        val entries = this.leaderboardRepository.getLeaderboard(entry.username, entry.pages.get(0), entry.pages.get(1));
         entry.session.asyncRemote.sendObject(entries.toString());
     }
 }
