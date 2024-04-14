@@ -18,11 +18,14 @@ interface LeaderboardComponentProps {
     elements: LeaderboardElement[];
    topPageIncrease: () => void;
    bottomPageIncrease: () => void;
+   maxCount: number;
 }
 
-const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease}: LeaderboardComponentProps) => {
+const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, maxCount}: LeaderboardComponentProps) => {
 
     const [cookies] = useCookies(['application_user']);
+
+    const displayButtons = useMemo<boolean>(() => elements.length<maxCount, [elements, maxCount]);
 
     const topElements = useMemo<LeaderboardElement[]>(() => {
         const filtered: LeaderboardElement[] = [];
@@ -54,7 +57,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease}: L
         if (elements.length > 0) {
             filtered.push(elements[i]);
         }
-        return filtered.reverse();
+        return filtered.reverse().filter((f) => !topElements.map(e => e.user.username).includes(f.user.username));
     }, [elements]);
 
     const youElement = useMemo<LeaderboardElement[]>(
@@ -96,17 +99,21 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease}: L
                     <ListDivider sx={{margin: 0}} />
                 </>
             ))}
-            <ListItem>
-                <ListItemButton sx={{display: 'grid', placeItems: 'center'}} onClick={topPageIncrease}>
-                    <ExpandMoreIcon color="primary" fontSize="large" />
-                </ListItemButton>
-            </ListItem>
+            {displayButtons && (
+                <ListItem>
+                    <ListItemButton sx={{display: 'grid', placeItems: 'center'}} onClick={topPageIncrease}>
+                        <ExpandMoreIcon color="primary" fontSize="large" />
+                    </ListItemButton>
+                </ListItem>
+            )}
             {youElement.map((e) => renderRow([e.placement, e.user.username, e.user.preliminaryPoints]))}
-            <ListItem>
-                <ListItemButton sx={{display: 'grid', placeItems: 'center'}} onClick={bottomPageIncrease}>
-                    <ExpandLessIcon color="primary" fontSize="large" />
-                </ListItemButton>
-            </ListItem>
+            {displayButtons && (
+                <ListItem>
+                    <ListItemButton sx={{display: 'grid', placeItems: 'center'}} onClick={bottomPageIncrease}>
+                        <ExpandLessIcon color="primary" fontSize="large" />
+                    </ListItemButton>
+                </ListItem>
+            )}
             {bottomElements.map((element) => (
                 <>
                     {renderRow([element.placement, element.user.username, element.user.preliminaryPoints])}

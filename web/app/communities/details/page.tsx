@@ -23,6 +23,7 @@ const DetailsPage = () => {
     const snackbar = useSnackbar();
     const [cookies] = useCookies(['application_user']);
     const [leaderboardElements, setElements] = useState<LeaderboardElement[]>([]);
+    const [maxElementCount, setMaxElementCount] = useState<number>(0);
     const [socket, setSocket] = useState<WebSocket|null>(null);
 
     useEffect(() => {
@@ -31,7 +32,9 @@ const DetailsPage = () => {
             console.log("opened socket");
         }
         socket.onmessage = (m) => {
-            setElements(JSON.parse(m.data));
+            const data = JSON.parse(m.data);
+            setElements(data.data);
+            setMaxElementCount(data.count);
         }
         setSocket(socket);
     }, []);
@@ -94,6 +97,7 @@ const DetailsPage = () => {
                                 elements={leaderboardElements}
                                 topPageIncrease={() => onPageChange(1,0)}
                                 bottomPageIncrease={() => onPageChange(0,-1)}
+                                maxCount={maxElementCount}
                             />
                         </Grid>
                     </Grid>

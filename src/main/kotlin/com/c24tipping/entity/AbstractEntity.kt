@@ -3,6 +3,7 @@ package com.c24tipping.entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.Id
 import jakarta.persistence.MappedSuperclass
+import java.lang.RuntimeException
 import java.lang.StringBuilder
 
 /**
@@ -23,9 +24,11 @@ abstract class AbstractEntity {
             val fields = obj.javaClass.declaredFields;
             val withExcluded = fields.map { it.name }.filter { !exclude.contains(it) && !it.startsWith("$$") };
             val wantedFields = fields.filter { withExcluded.contains(it.name) };
+            println(wantedFields.lastIndex)
             val builder = StringBuilder();
             builder.append("{");
             for (i in 0..wantedFields.lastIndex) {
+                wantedFields[i].isAccessible = true;
                 builder.append("\"${wantedFields[i].name}\":");
                 if (wantedFields[i].type.toString().equals("class java.lang.String")) {
                     builder.append("\"${wantedFields[i].get(obj).toString()}\"");

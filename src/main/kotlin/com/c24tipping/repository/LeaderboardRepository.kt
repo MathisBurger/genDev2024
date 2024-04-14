@@ -3,6 +3,7 @@ package com.c24tipping.repository
 import com.c24tipping.entity.Community
 import com.c24tipping.entity.LeaderboardEntry
 import com.c24tipping.entity.User
+import com.c24tipping.websocket.data.SocketDataResponse
 import io.quarkus.hibernate.orm.panache.PanacheRepository
 import io.quarkus.panache.common.Sort
 import jakarta.enterprise.context.ApplicationScoped
@@ -27,7 +28,7 @@ class LeaderboardRepository : PanacheRepository<LeaderboardEntry> {
     /**
      * Query for global leaderboard
      */
-    fun getLeaderboard(username: String, upperPage: Int, lowerPage: Int, communityId: Long? = null): List<LeaderboardEntry> {
+    fun getLeaderboard(username: String, upperPage: Int, lowerPage: Int, communityId: Long? = null): SocketDataResponse {
         val count = this.countQuery(communityId);
         var lp = lowerPage;
         if (lowerPage == -1) {
@@ -49,7 +50,7 @@ class LeaderboardRepository : PanacheRepository<LeaderboardEntry> {
         );
         cq.select(root).where(allCriteria)
 
-        return this.entityManager.createQuery(cq).resultList;
+        return SocketDataResponse(count, this.entityManager.createQuery(cq).resultList);
     }
 
     /**
