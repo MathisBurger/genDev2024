@@ -26,6 +26,15 @@ class Community : AbstractEntity() {
         inverseJoinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")])
     var members: MutableList<User> = mutableListOf();
 
+    /**
+     * All leaderboard entries of the community
+     */
     @OneToMany(mappedBy = "community")
     var leaderboard: MutableList<LeaderboardEntry> = mutableListOf();
+
+    /**
+     * All pinned users of this community
+     */
+    @OneToMany(mappedBy = "community")
+    var pinnedUsers: MutableList<PinnedUser> = mutableListOf();
 }

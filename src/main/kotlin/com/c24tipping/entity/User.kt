@@ -1,9 +1,6 @@
 package com.c24tipping.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.ManyToMany
-import jakarta.persistence.OneToMany
+import jakarta.persistence.*
 
 /**
  * User entity that is used for login
@@ -45,7 +42,25 @@ class User : AbstractEntity() {
     @OneToMany(mappedBy = "user")
     var leaderboardPlacements: MutableList<LeaderboardEntry> = mutableListOf();
 
+    /**
+     * All users that this user has pinned
+     */
+    @OneToMany(mappedBy = "pinningUser")
+    @JoinTable(name = "user_pinned",
+        joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name = "pinned_id", referencedColumnName = "id")])
+    var pinnedUsers: MutableList<PinnedUser> = mutableListOf();
+
+    /**
+     * All entrys where the user is pinned in
+     */
+    @OneToMany(mappedBy = "pinnedUser")
+    @JoinTable(name = "user_pinned_in",
+        joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],
+        inverseJoinColumns = [JoinColumn(name = "pinned_id", referencedColumnName = "id")])
+    var pinnedIn: MutableList<PinnedUser> = mutableListOf();
+
     override fun toString(): String {
-        return buildJSON(this, listOf("communities", "bets", "leaderboardPlacements"))
+        return buildJSON(this, listOf("communities", "bets", "leaderboardPlacements", "pinnedUsers", "pinnedIn"))
     }
 }
