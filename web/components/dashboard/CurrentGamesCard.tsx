@@ -12,6 +12,9 @@ const CurrentGamesCard = () => {
 
     useEffect(() => {
         apiService.getAllGames().then((res) => setGames(res.data as MinifiedGame[]));
+        const interval = setInterval(() => apiService.getAllGames().then((res) => setGames(res.data as MinifiedGame[])), 10_000);
+
+        return () => clearInterval(interval);
     }, []);
 
     const futureGames = useMemo<MinifiedGame[]>(

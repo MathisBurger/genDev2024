@@ -22,6 +22,78 @@ class LeaderboardRepository : PanacheRepository<LeaderboardEntry> {
     }
 
     /**
+     * Gets a dashboard leaderboard
+     *
+     * @param communityId The ID of a community
+     * @param username The username of the current user
+     */
+    fun getDashboardLeaderboard(communityId: Long?, username: String): List<LeaderboardEntry> {
+        var cb = this.entityManager.criteriaBuilder;
+        val cq = cb.createQuery(LeaderboardEntry::class.java);
+        val root = cq.from(LeaderboardEntry::class.java);
+        val userJoin: Join<LeaderboardEntry, User> = root.join("user");
+        val count = this.countQuery(communityId);
+        if (count < 7) {
+            cq.select(root).where(this.getCommunityPredicate(cb, root, communityId))
+            return this.entityManager.createQuery(cq).resultList;
+        }
+        var selfConditions = cb.and(
+            this.getCommunityPredicate(cb, root, communityId),
+            cb.equal(userJoin.get<String>("username"), username)
+        );
+        cq.select(root).where(selfConditions)
+        val self = this.entityManager.createQuery(cq).singleResult;
+
+        cb = this.entityManager.criteriaBuilder;
+        val topThreeCondition = cb.and(
+            this.getCommunityPredicate(cb, root, communityId),
+            cb.lessThanOrEqualTo(root.get<Int>("placement"), 3)
+        );
+
+        var afterCondition = cb.equal(root.get<Int>("placement"), self.placement+1);
+        var beforeCondition = cb.equal(root.get<Int>("placement"), self.placement-1);
+
+        // Define specific rules to make sure always 7 entries are returned
+        if (self.placement < 5) {
+            afterCondition = cb.lessThanOrEqualTo(root.get<Int>("placement"), self.placement+5-self.placement);
+        }
+        if (count - self.placement < 2) {
+            var sub: Int;
+            if ((count-self.placement).toInt() == 1) {
+                sub = 2;
+            } else {
+                sub = 3;
+            }
+            beforeCondition = cb.greaterThanOrEqualTo(root.get<Int>("placement"), self.placement-sub);
+        }
+
+        // Applying community dependency to rules
+        afterCondition = cb.and(
+            afterCondition,
+            this.getCommunityPredicate(cb, root, communityId)
+        );
+        beforeCondition = cb.and(
+            beforeCondition,
+            this.getCommunityPredicate(cb, root, communityId)
+        )
+
+        val lastCondition = cb.and(
+            cb.equal(root.get<Int>("placement"), count),
+            this.getCommunityPredicate(cb, root, communityId)
+        )
+
+        val allConditions = cb.or(
+            selfConditions,
+            topThreeCondition,
+            beforeCondition,
+            afterCondition,
+            lastCondition
+        );
+        cq.select(root).where(allConditions).orderBy(cb.asc(root.get<Int>("placement")));
+        return this.entityManager.createQuery(cq).resultList;
+    }
+
+    /**
      * Query for global leaderboard
      */
     fun getLeaderboard(username: String, upperPage: Int, lowerPage: Int, communityId: Long? = null): SocketDataResponse {
@@ -40,6 +112,7 @@ class LeaderboardRepository : PanacheRepository<LeaderboardEntry> {
             qb.equal(user.get<String>("username"), username),
             this.getPinnedUserPredicate(qb, root, communityId, username)
         );
+
 
         val allCriteria = qb.and(
             this.getCommunityPredicate(qb, root, communityId),

@@ -2,6 +2,7 @@ import ResponseCode from "@/service/ResponseCode";
 import {Community, CommunityMember, ExtendedCommunity} from "@/typings/community";
 import {PersonalBet} from "@/typings/bet";
 import {MinifiedGame} from "@/typings/game";
+import {LeaderboardElement} from "@/components/LeaderboardComponent";
 
 export interface ApiResponse<T> {
     status: ResponseCode;
@@ -207,6 +208,15 @@ class ApiService {
      */
     public async renameGame(gameId: number, teamHome: string, teamAway: string): Promise<ApiResponse<string>> {
         return await ApiService.post<string>("/api/admin/renameGame", {password: this.password, gameId, teamHome, teamAway});
+    }
+
+    /**
+     * Gets a dashboard leaderboard
+     *
+     * @param communityId The ID of the community
+     */
+    public async getDashboardLeaderboard(communityId?: number): Promise<ApiResponse<LeaderboardElement[]>> {
+        return await ApiService.get<LeaderboardElement[]>(`/api/leaderboard/dashboard?username=${this.username}&communityId=${communityId ?? -1}`);
     }
 
     /**

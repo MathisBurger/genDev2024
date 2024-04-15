@@ -18,11 +18,12 @@ const BetsPage = () => {
         const fetcher = async () => {
             const resp = await apiService.getPersonalBets();
             if (resp.status === ResponseCode.OK) {
-                console.log(resp);
                 setter(resp.data as PersonalBet[]);
             }
         }
         fetcher();
+        const interval = setInterval(fetcher, 10_000);
+        return () => clearInterval(interval)
     }, [apiService]);
 
 

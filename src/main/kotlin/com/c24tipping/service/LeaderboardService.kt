@@ -1,6 +1,7 @@
 package com.c24tipping.service
 
 import com.c24tipping.entity.Community
+import com.c24tipping.entity.LeaderboardEntry
 import com.c24tipping.entity.User
 import com.c24tipping.repository.LeaderboardRepository
 import com.c24tipping.websocket.CommunitySocket
@@ -27,6 +28,19 @@ class LeaderboardService : AbstractService() {
 
     @Inject
     lateinit var transactionManager: TransactionManager;
+
+    @Inject
+    lateinit var leaderboardRepository: LeaderboardRepository;
+
+    /**
+     * Gets the dashboard for a user
+     *
+     * @param communityId The ID of the community
+     * @param username The users username
+     */
+    fun getDashboardLeaderboard(communityId: Long?, username: String): List<LeaderboardEntry> {
+        return this.leaderboardRepository.getDashboardLeaderboard(communityId, username);
+    }
 
     /**
      * Updates the global leaderboard
