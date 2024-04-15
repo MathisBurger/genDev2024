@@ -1,9 +1,14 @@
+'use client';
 import {List, ListDivider, ListItem, ListItemButton} from "@mui/joy";
-import {useMemo} from "react";
+import {useEffect, useMemo, useState} from "react";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import {useCookies} from "react-cookie";
-
+import useApiService from "@/hooks/useApiService";
+import {CommunityMember} from "@/typings/community";
+import ResponseCode from "@/service/ResponseCode";
+import StarIcon from '@mui/icons-material/Star';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 export interface LeaderboardElement {
     placement: number;
@@ -19,11 +24,21 @@ interface LeaderboardComponentProps {
    topPageIncrease: () => void;
    bottomPageIncrease: () => void;
    maxCount: number;
+   communityId?: number;
 }
 
-const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, maxCount}: LeaderboardComponentProps) => {
+const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, maxCount, communityId}: LeaderboardComponentProps) => {
 
     const [cookies] = useCookies(['application_user']);
+    const [pinnedUsers, setPinnedUsers] = useState<CommunityMember[]>([]);
+    const pinnedUsersUsernames = useMemo(() => pinnedUsers.map(u => u.username), [pinnedUsers]);
+    const apiService = useApiService();
+
+    useEffect(() => {
+        if (communityId) {
+            apiService.getPinnedUsers(communityId).then(res => setPinnedUsers(res.data as CommunityMember[]))
+        }
+    }, []);
 
     const displayButtons = useMemo<boolean>(() => elements.length<maxCount, [elements, maxCount]);
 
@@ -73,29 +88,63 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
         },
         [elements, topElements, bottomElements]);
 
+    const pinUser = async (userToPin: string) => {
+        if (communityId) {
+            const result = await apiService.pinUser(communityId, userToPin);
+            if (result.status === ResponseCode.OK) {
+                setPinnedUsers(result.data as CommunityMember[]);
+            }
+        }
+    }
 
-    const renderRow = (els: any[]) => (
-        <ListItem sx={{padding: 0, margin: 0}}>
-            <List orientation="horizontal" sx={{padding: 0, margin: 0}}>
-                {els.map((element) => (
-                    <>
-                        <ListItem sx={{width: '200px', height: '10px', padding: 0, margin: 0}}>
-                            <p style={{margin: 0}}>{element}</p>
-                        </ListItem>
-                        <ListDivider />
-                    </>
-                ))}
-            </List>
-        </ListItem>
-    );
+    const unpinUser = async (userToPin: string) => {
+        if (communityId) {
+            const result = await apiService.unpinUser(communityId, userToPin);
+            if (result.status === ResponseCode.OK) {
+                setPinnedUsers(result.data as CommunityMember[]);
+            }
+        }
+    }
+
+
+    const renderRow = (els: any[], renderFav?: boolean) => {
+        const canBePinned = cookies.application_user !== els[1];
+
+        return (
+            <ListItem sx={{padding: 0, margin: 0}}>
+                <List orientation="horizontal" sx={{padding: 0, margin: 0}}>
+                    {els.map((element) => (
+                        <>
+                            <ListItem sx={{width: '150px', height: '10px', padding: 0, margin: 0}}>
+                                <p style={{margin: 0}}>{element}</p>
+                            </ListItem>
+                            <ListDivider />
+                        </>
+                    ))}
+                    <ListItem sx={{width: '50px', height: '10px', padding: 0, margin: 0}}>
+                        {pinnedUsersUsernames.includes(els[1]) && renderFav && canBePinned && (
+                            <ListItemButton onClick={() => unpinUser(els[1])}>
+                                <StarIcon />
+                            </ListItemButton>
+                        )}
+                        {!pinnedUsersUsernames.includes(els[1]) && renderFav && canBePinned && (
+                            <ListItemButton onClick={() => pinUser(els[1])}>
+                                <StarBorderIcon />
+                            </ListItemButton>
+                        )}
+                    </ListItem>
+                </List>
+            </ListItem>
+        );
+    }
 
     return (
-        <List>
-            {renderRow(["Platzierung", "Nutzername", "Punkte"])}
+        <List sx={{maxWidth: '550px'}}>
+            {renderRow(["Platzierung", "Nutzername", "Punkte"], false)}
             <ListDivider sx={{margin: 0}} />
             {topElements.map((element) => (
                 <>
-                    {renderRow([element.placement, element.user.username, element.user.preliminaryPoints])}
+                    {renderRow([element.placement, element.user.username, element.user.preliminaryPoints], communityId !== undefined)}
                     <ListDivider sx={{margin: 0}} />
                 </>
             ))}
@@ -116,7 +165,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
             )}
             {bottomElements.map((element) => (
                 <>
-                    {renderRow([element.placement, element.user.username, element.user.preliminaryPoints])}
+                    {renderRow([element.placement, element.user.username, element.user.preliminaryPoints], communityId !== undefined)}
                     <ListDivider sx={{margin: 0}} />
                 </>
             ))}

@@ -55,8 +55,8 @@ class PinnedUserRepository : PanacheRepository<PinnedUser> {
             val pinnedCondition = cb.equal(pinnedUser.get<String>("username"), userToPin);
             val condition = cb.and(communityCondition, userCondition, pinnedCondition);
             cq.select(root).where(condition);
-
-            return Optional.of(this.entityManager.createQuery(cq).singleResult);
+            val results = this.entityManager.createQuery(cq).resultList;
+            return Optional.of(results.get(0));
         } catch (e: NoResultException) {
             return Optional.empty();
         }

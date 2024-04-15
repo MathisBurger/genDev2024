@@ -89,7 +89,6 @@ class UserFixtureLoader {
                         this.communityService.joinCommunity(JoinCommunityRequest(usr.username!!, oddComm.id!!));
                     }
 
-                    println(i);
                 }
             }
         }

@@ -9,6 +9,7 @@ import com.c24tipping.repository.PinnedUserRepository
 import com.c24tipping.repository.UserRepository
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
+import jakarta.transaction.Transactional
 
 /**
  * Handles pinned user actions
@@ -43,6 +44,7 @@ class PinnedUserService : AbstractService() {
      * @param username The username of the user
      * @param userToPin The username of the user that is pinned
      */
+    @Transactional
     fun pinUser(communityId: Long, username: String, userToPin: String): List<CommunityMember> {
         val community = this.communityRepository.findByIdOptional(communityId);
         if (community.isEmpty) {
@@ -60,7 +62,7 @@ class PinnedUserService : AbstractService() {
         pinnedUser.community = community.get();
         pinnedUser.pinnedUser = userToPinInstance.get();
         pinnedUser.pinningUser = pinningUser.get();
-        this.entityManager.persist(pinningUser);
+        this.entityManager.persist(pinnedUser);
         this.entityManager.flush();
         community.get().pinnedUsers.add(pinnedUser);
         this.entityManager.persist(community.get());
@@ -79,6 +81,7 @@ class PinnedUserService : AbstractService() {
      * @param username The username of the user
      * @param userToPin The username of the user that is pinned
      */
+    @Transactional
     fun unpinUser(communityId: Long, username: String, userToPin: String): List<CommunityMember> {
         val instance = this.pinnedUserRepository.findSpecificPinnedUser(communityId, username, userToPin);
         if (instance.isEmpty) {

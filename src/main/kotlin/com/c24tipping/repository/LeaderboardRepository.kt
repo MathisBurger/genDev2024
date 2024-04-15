@@ -34,6 +34,8 @@ class LeaderboardRepository : PanacheRepository<LeaderboardEntry> {
         if (lowerPage == -1) {
             lp = (count / 10).toInt()-1;
         }
+        println(username)
+        println(communityId)
         val qb: CriteriaBuilder = this.entityManager.criteriaBuilder;
         val cq: CriteriaQuery<LeaderboardEntry> = qb.createQuery(LeaderboardEntry::class.java);
         val root: Root<LeaderboardEntry> = cq.from(LeaderboardEntry::class.java);

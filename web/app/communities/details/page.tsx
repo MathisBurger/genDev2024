@@ -86,18 +86,19 @@ const DetailsPage = () => {
                     {!getter.map(g => g.id).includes(community.id) && (
                         <Button onClick={onJoin}>Beitreten</Button>
                     )}
-                    <Grid container direction="row" spacing={2}>
-                        <Grid xs={3}>
+                    <Grid container direction="row" spacing={2} justifyContent="space-between">
+                        <Grid xs={4}>
                             <h2>Mitglieder</h2>
-                            <EntityList columns={memberCols} rows={community.members} sx={{width: '300px', display: 'grid'}} noSlot hideFooter />
+                            <EntityList columns={memberCols} rows={community.members} sx={{width: '250px', display: 'grid'}} noSlot hideFooter />
                         </Grid>
-                        <Grid xs={9}>
+                        <Grid xs={8}>
                             <h2>Leaderboard</h2>
                             <LeaderboardComponent
                                 elements={leaderboardElements}
                                 topPageIncrease={() => onPageChange(1,0)}
                                 bottomPageIncrease={() => onPageChange(0,-1)}
                                 maxCount={maxElementCount}
+                                communityId={parseInt(id, 10)}
                             />
                         </Grid>
                     </Grid>

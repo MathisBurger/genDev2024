@@ -1,5 +1,5 @@
 import ResponseCode from "@/service/ResponseCode";
-import {Community, ExtendedCommunity} from "@/typings/community";
+import {Community, CommunityMember, ExtendedCommunity} from "@/typings/community";
 import {PersonalBet} from "@/typings/bet";
 import {MinifiedGame} from "@/typings/game";
 
@@ -158,6 +158,35 @@ class ApiService {
      */
     public async updateGame(gameId: number, goalsHome: number, goalsAway: number): Promise<ApiResponse<string>> {
         return await ApiService.post<string>("/api/admin/updateGame", {password: this.password, gameId, goalsHome, goalsAway});
+    }
+
+    /**
+     * Gets all pinned users
+     *
+     * @param communityId The ID of the community
+     */
+    public async getPinnedUsers(communityId: number): Promise<ApiResponse<CommunityMember[]>> {
+        return await ApiService.get<CommunityMember[]>(`/api/pinned?communityId=${communityId}&username=${this.username}`);
+    }
+
+    /**
+     * Pins a user
+     *
+     * @param communityId The ID of the community
+     * @param userToPin The username of the user to pin
+     */
+    public async pinUser(communityId: number, userToPin: string): Promise<ApiResponse<CommunityMember[]>> {
+        return await ApiService.post<CommunityMember[]>("/api/pinned/pin", {communityId, userToPin, username: this.username});
+    }
+
+    /**
+     * Unpins a user
+     *
+     * @param communityId The ID of the community
+     * @param userToPin The username of the user to pin
+     */
+    public async unpinUser(communityId: number, userToPin: string): Promise<ApiResponse<CommunityMember[]>> {
+        return await ApiService.post<CommunityMember[]>("/api/pinned/unpin", {communityId, userToPin, username: this.username});
     }
 
     /**

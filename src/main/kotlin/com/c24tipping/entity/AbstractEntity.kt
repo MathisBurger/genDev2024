@@ -24,7 +24,6 @@ abstract class AbstractEntity {
             val fields = obj.javaClass.declaredFields;
             val withExcluded = fields.map { it.name }.filter { !exclude.contains(it) && !it.startsWith("$$") };
             val wantedFields = fields.filter { withExcluded.contains(it.name) };
-            println(wantedFields.lastIndex)
             val builder = StringBuilder();
             builder.append("{");
             for (i in 0..wantedFields.lastIndex) {
