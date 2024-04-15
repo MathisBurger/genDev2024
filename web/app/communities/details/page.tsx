@@ -99,6 +99,7 @@ const DetailsPage = () => {
                                 bottomPageIncrease={() => onPageChange(0,-1)}
                                 maxCount={maxElementCount}
                                 communityId={parseInt(id, 10)}
+                                updateViaSocket={() => socket?.send("0,0")}
                             />
                         </Grid>
                     </Grid>

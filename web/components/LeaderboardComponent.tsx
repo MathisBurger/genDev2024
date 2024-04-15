@@ -1,6 +1,6 @@
 'use client';
 import {List, ListDivider, ListItem, ListItemButton} from "@mui/joy";
-import {useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import {useCookies} from "react-cookie";
@@ -25,10 +25,10 @@ interface LeaderboardComponentProps {
    bottomPageIncrease: () => void;
    maxCount: number;
    communityId?: number;
+   updateViaSocket?: () => void;
 }
 
-const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, maxCount, communityId}: LeaderboardComponentProps) => {
-
+const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, maxCount, communityId, updateViaSocket}: LeaderboardComponentProps) => {
     const [cookies] = useCookies(['application_user']);
     const [pinnedUsers, setPinnedUsers] = useState<CommunityMember[]>([]);
     const pinnedUsersUsernames = useMemo(() => pinnedUsers.map(u => u.username), [pinnedUsers]);
@@ -39,6 +39,11 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
             apiService.getPinnedUsers(communityId).then(res => setPinnedUsers(res.data as CommunityMember[]))
         }
     }, []);
+
+    const isSpecialDisplay = useCallback((name: string) => {
+        const specialNames = pinnedUsersUsernames.concat(cookies.application_user);
+        return specialNames.includes(name);
+    }, [cookies, pinnedUsersUsernames]);
 
     const displayButtons = useMemo<boolean>(() => elements.length<maxCount, [elements, maxCount]);
 
@@ -81,10 +86,19 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
             if (youElements.length === 0) {
                 return [];
             }
-            if (youElements[0].user.preliminaryPoints === topElements[topElements.length-1].user.preliminaryPoints) {
-                return [{...youElements[0], placement: topElements[topElements.length-1].placement}]
+            const updatedElements: LeaderboardElement[] = [];
+            for (let i=0; i<youElements.length; i++) {
+                if (i===0 && youElements[0].user.preliminaryPoints === topElements[topElements.length-1].user.preliminaryPoints) {
+                    updatedElements.push({...youElements[0], placement: topElements[topElements.length-1].placement});
+                    continue;
+                }
+                if (youElements[i].user.preliminaryPoints === updatedElements[i-1].user.preliminaryPoints) {
+                    updatedElements.push({...youElements[i], placement: updatedElements[i-1].placement});
+                    continue;
+                }
+                updatedElements.push(youElements[i])
             }
-            return youElements;
+            return updatedElements;
         },
         [elements, topElements, bottomElements]);
 
@@ -102,6 +116,9 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
             const result = await apiService.unpinUser(communityId, userToPin);
             if (result.status === ResponseCode.OK) {
                 setPinnedUsers(result.data as CommunityMember[]);
+                if (updateViaSocket) {
+                    updateViaSocket();
+                }
             }
         }
     }
@@ -109,6 +126,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
 
     const renderRow = (els: any[], renderFav?: boolean) => {
         const canBePinned = cookies.application_user !== els[1];
+        const colorStyle = isSpecialDisplay(els[1]) ? '#c84df1' : undefined;
 
         return (
             <ListItem sx={{padding: 0, margin: 0}}>
@@ -116,7 +134,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
                     {els.map((element) => (
                         <>
                             <ListItem sx={{width: '150px', height: '10px', padding: 0, margin: 0}}>
-                                <p style={{margin: 0}}>{element}</p>
+                                <p style={{margin: 0, color: colorStyle}}>{element}</p>
                             </ListItem>
                             <ListDivider />
                         </>
@@ -155,7 +173,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
                     </ListItemButton>
                 </ListItem>
             )}
-            {youElement.map((e) => renderRow([e.placement, e.user.username, e.user.preliminaryPoints]))}
+            {youElement.map((e) => renderRow([e.placement, e.user.username, e.user.preliminaryPoints], communityId !== undefined))}
             {displayButtons && (
                 <ListItem>
                     <ListItemButton sx={{display: 'grid', placeItems: 'center'}} onClick={bottomPageIncrease}>

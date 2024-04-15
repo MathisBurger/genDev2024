@@ -2,17 +2,13 @@ package com.c24tipping.repository
 
 import com.c24tipping.entity.Community
 import com.c24tipping.entity.LeaderboardEntry
+import com.c24tipping.entity.PinnedUser
 import com.c24tipping.entity.User
 import com.c24tipping.websocket.data.SocketDataResponse
 import io.quarkus.hibernate.orm.panache.PanacheRepository
 import io.quarkus.panache.common.Sort
 import jakarta.enterprise.context.ApplicationScoped
-import jakarta.persistence.criteria.CriteriaBuilder
-import jakarta.persistence.criteria.CriteriaQuery
-import jakarta.persistence.criteria.Expression
-import jakarta.persistence.criteria.Join
-import jakarta.persistence.criteria.Predicate
-import jakarta.persistence.criteria.Root
+import jakarta.persistence.criteria.*
 
 /**
  * Handles leaderboard transactions
@@ -34,8 +30,6 @@ class LeaderboardRepository : PanacheRepository<LeaderboardEntry> {
         if (lowerPage == -1) {
             lp = (count / 10).toInt()-1;
         }
-        println(username)
-        println(communityId)
         val qb: CriteriaBuilder = this.entityManager.criteriaBuilder;
         val cq: CriteriaQuery<LeaderboardEntry> = qb.createQuery(LeaderboardEntry::class.java);
         val root: Root<LeaderboardEntry> = cq.from(LeaderboardEntry::class.java);
@@ -43,14 +37,15 @@ class LeaderboardRepository : PanacheRepository<LeaderboardEntry> {
         val conditions = qb.or(
             qb.greaterThan(root.get("placement"), this.getPageLimit(lp, count, 0)),
             qb.lessThan(root.get("placement"), this.getPageLimit(upperPage, count, 1)),
-            qb.equal(user.get<String>("username"), username)
+            qb.equal(user.get<String>("username"), username),
+            this.getPinnedUserPredicate(qb, root, communityId, username)
         );
 
         val allCriteria = qb.and(
             this.getCommunityPredicate(qb, root, communityId),
             conditions
         );
-        cq.select(root).where(allCriteria)
+        cq.select(root).where(allCriteria).orderBy(qb.asc(root.get<Int>("placement")))
 
         return SocketDataResponse(count, this.entityManager.createQuery(cq).resultList);
     }
@@ -88,6 +83,28 @@ class LeaderboardRepository : PanacheRepository<LeaderboardEntry> {
         }
         val community: Join<LeaderboardEntry, Community> = root.join("community");
         return qb.equal(community.get<Long>("id"), communityId);
+    }
+
+    /**
+     * Gets the predicate of pinned users
+     *
+     * @param cb The criteria builder
+     * @param userJoin The user join
+     * @param communityId The ID of the community
+     * @param username The username of the current user
+     */
+    private fun getPinnedUserPredicate(cb: CriteriaBuilder, root: Root<LeaderboardEntry>, communityId: Long?, username: String): Predicate {
+
+        // entry => user => pinnedIn => (pinningUser, community)
+
+        val userJoin: Join<LeaderboardEntry, User> = root.join("user", JoinType.LEFT);
+        val pinnedInJoin: Join<User, PinnedUser> = userJoin.join("pinnedIn", JoinType.LEFT);
+        val pinnedBy: Join<PinnedUser, User> = pinnedInJoin.join("pinningUser", JoinType.LEFT);
+        val communityJoin: Join<PinnedUser, Community> = pinnedInJoin.join("community", JoinType.LEFT);
+
+        val pinnedByCondition = cb.equal(pinnedBy.get<String>("username"), username);
+        val communityCondition = cb.equal(communityJoin.get<Long>("id"), communityId);
+        return cb.and(pinnedByCondition, communityCondition);
     }
 
     /**
