@@ -5,4 +5,5 @@ export interface MinifiedGame {
     startsAt: string;
     goalsHome?: number;
     goalsAway?: number;
+    done: boolean;
 }

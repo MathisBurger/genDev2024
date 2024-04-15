@@ -30,5 +30,9 @@ data class MinifiedGame @JsonbCreator constructor(
     /**
      * All away goals
      */
-    var goalsAway: Int?
+    var goalsAway: Int?,
+    /**
+     * If the game is done
+     */
+    val done: Boolean
 )

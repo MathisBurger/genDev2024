@@ -35,6 +35,9 @@ const UpdateGamePage = () => {
 
     return (
         <Grid container direction="row" justifyContent="center">
+            <Grid xs={7}>
+                <Button onClick={() => router.back()}>Zurück</Button>
+            </Grid>
             <Grid xs={7}><h1 style={{textAlign: 'center'}}>Spiel aktualisieren</h1></Grid>
             <Grid xs={6}>
                 <Card>

@@ -88,11 +88,11 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
             }
             const updatedElements: LeaderboardElement[] = [];
             for (let i=0; i<youElements.length; i++) {
-                if (i===0 && youElements[0].user.preliminaryPoints === topElements[topElements.length-1].user.preliminaryPoints) {
+                if (i===0 && topElements.length >0 && youElements[0].user.preliminaryPoints === topElements[topElements.length-1].user.preliminaryPoints) {
                     updatedElements.push({...youElements[0], placement: topElements[topElements.length-1].placement});
                     continue;
                 }
-                if (youElements[i].user.preliminaryPoints === updatedElements[i-1].user.preliminaryPoints) {
+                if (updatedElements.length > 0 && youElements[i].user.preliminaryPoints === updatedElements[i-1].user.preliminaryPoints) {
                     updatedElements.push({...youElements[i], placement: updatedElements[i-1].placement});
                     continue;
                 }
@@ -157,12 +157,12 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
     }
 
     return (
-        <List sx={{maxWidth: '550px'}}>
-            {renderRow(["Platzierung", "Nutzername", "Punkte"], false)}
+        <List sx={{maxWidth: '700px'}}>
+            {renderRow(["Platzierung", "Nutzername", "Punkte", "Sichere Punkte"], false)}
             <ListDivider sx={{margin: 0}} />
             {topElements.map((element) => (
                 <>
-                    {renderRow([element.placement, element.user.username, element.user.preliminaryPoints], communityId !== undefined)}
+                    {renderRow([element.placement, element.user.username, element.user.preliminaryPoints, element.user.points], communityId !== undefined)}
                     <ListDivider sx={{margin: 0}} />
                 </>
             ))}
@@ -173,7 +173,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
                     </ListItemButton>
                 </ListItem>
             )}
-            {youElement.map((e) => renderRow([e.placement, e.user.username, e.user.preliminaryPoints], communityId !== undefined))}
+            {youElement.map((e) => renderRow([e.placement, e.user.username, e.user.preliminaryPoints, e.user.points], communityId !== undefined))}
             {displayButtons && (
                 <ListItem>
                     <ListItemButton sx={{display: 'grid', placeItems: 'center'}} onClick={bottomPageIncrease}>
@@ -183,7 +183,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
             )}
             {bottomElements.map((element) => (
                 <>
-                    {renderRow([element.placement, element.user.username, element.user.preliminaryPoints], communityId !== undefined)}
+                    {renderRow([element.placement, element.user.username, element.user.preliminaryPoints, element.user.points], communityId !== undefined)}
                     <ListDivider sx={{margin: 0}} />
                 </>
             ))}

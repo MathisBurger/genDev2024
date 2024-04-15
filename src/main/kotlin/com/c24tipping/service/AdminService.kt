@@ -53,6 +53,9 @@ class AdminService : AbstractService() {
             throw UnauthorizedException("Das Passwort war falsch!");
         }
         val game = this.gameRepository.findById(gameId);
+        if (game.gameDone) {
+            throw Exception("Das Spiel kann nicht bearbeitet werden");
+        }
         game.goalsAway = awayGoals;
         game.goalsHome = homeGoals;
         this.entityManager.persist(game);
@@ -83,6 +86,55 @@ class AdminService : AbstractService() {
         for (community in communities) {
             this.leaderboardService.updateCommunityLeaderboard(community);
         }
+    }
+
+    /**
+     * Ends a football game
+     *
+     * @param adminPW The admin password
+     * @param gameId The ID of the game that should be ended
+     */
+    @Transactional
+    fun endGame(adminPW: String, gameId: Long) {
+        if (!this.adminPW.equals(adminPW)) {
+            throw UnauthorizedException("Das Passwort war falsch!");
+        }
+        val game = this.gameRepository.findById(gameId);
+        if (game.gameDone) {
+            throw Exception("Das Spiel kann nicht bearbeitet werden");
+        }
+        game.gameDone = true;
+        this.entityManager.persist(game);
+        this.entityManager.flush();
+
+        for (bet in game.bets) {
+            bet.user!!.points = bet.user!!.preliminaryPoints;
+            this.entityManager.persist(bet.user);
+        }
+        this.entityManager.flush();
+    }
+
+    /**
+     * Renames a game
+     *
+     * @param adminPW The admin password for auth
+     * @param gameId The ID of the game that should be renamed
+     * @param awayTeam The away team name
+     * @param homeTeam The home team name
+     */
+    @Transactional
+    fun renameGame(adminPW: String, gameId: Long, homeTeam: String, awayTeam: String) {
+        if (!this.adminPW.equals(adminPW)) {
+            throw UnauthorizedException("Das Passwort war falsch!");
+        }
+        val game = this.gameRepository.findById(gameId);
+        if (game.gameDone) {
+            throw Exception("Das Spiel kann nicht bearbeitet werden");
+        }
+        game.teamHome = homeTeam;
+        game.teamAway = awayTeam;
+        this.entityManager.persist(game);
+        this.entityManager.flush();
     }
 
     /**

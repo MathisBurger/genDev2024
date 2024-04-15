@@ -1,6 +1,6 @@
 'use client';
 import {MinifiedGame} from "@/typings/game";
-import {Button, Card, CardContent, Grid} from "@mui/joy";
+import {Button, ButtonGroup, Card, CardContent, Grid} from "@mui/joy";
 import usePersonalBets from "@/hooks/usePersonalBets";
 import {usePathname, useRouter} from "next/navigation";
 
@@ -37,11 +37,28 @@ const GameCard = ({game}: GameCardProps) => {
                         </Grid>
                     )}
                     {pathname === "/admin" && (
-                        <Grid xs={3}>
-                            <Button
-                                fullWidth
-                                onClick={() => router.push(`/admin/updateGame?gameId=${game.id}&gameName=${game.teamHome + " gegen " + game.teamAway}&homeGoals=${game.goalsHome}&awayGoals=${game.goalsAway}`)}
-                            >Spiel aktualisieren</Button>
+                        <Grid xs={5}>
+                            <ButtonGroup>
+                                <Button
+                                    color="primary"
+                                    disabled={game.done}
+                                    onClick={() => router.push(`/admin/renameGame?gameId=${game.id}&gameName=${game.teamHome + " gegen " + game.teamAway}`)}
+                                >
+                                    Umbenennen
+                                </Button>
+                                <Button
+                                    color="primary"
+                                    fullWidth
+                                    disabled={game.done}
+                                    onClick={() => router.push(`/admin/updateGame?gameId=${game.id}&gameName=${game.teamHome + " gegen " + game.teamAway}&homeGoals=${game.goalsHome}&awayGoals=${game.goalsAway}`)}
+                                >Aktualisieren</Button>
+                                <Button
+                                    color="danger"
+                                    disabled={game.done}
+                                    onClick={() => router.push(`/admin/endGame?gameId=${game.id}&gameName=${game.teamHome + " gegen " + game.teamAway}&homeGoals=${game.goalsHome}&awayGoals=${game.goalsAway}`)}
+                                >Beenden
+                                </Button>
+                            </ButtonGroup>
                         </Grid>
                     )}
                 </Grid>

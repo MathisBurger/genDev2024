@@ -82,7 +82,7 @@ class UserFixtureLoader {
                     this.entityManager.persist(usr);
                     this.entityManager.persist(games.get(0));
                     this.entityManager.flush();
-
+                    println(i);
                     if (i % 2 == 0) {
                         this.communityService.joinCommunity(JoinCommunityRequest(usr.username!!, evenComm.id!!));
                     } else {

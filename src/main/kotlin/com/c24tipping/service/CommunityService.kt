@@ -110,10 +110,14 @@ class CommunityService : AbstractService() {
         val lbe = LeaderboardEntry()
         lbe.community = community.get();
         lbe.placement = community.get().members.size;
+        lbe.user = user.get();
         this.entityManager.persist(lbe);
         community.get().leaderboard.add(lbe);
+        user.get().leaderboardPlacements.add(lbe);
+        this.entityManager.persist(user.get());
         this.entityManager.persist(community.get());
         this.entityManager.flush();
+        this.leaderboardService.updateCommunityLeaderboard(community.get());
         return this.convertToExtended(community.get());
     }
 

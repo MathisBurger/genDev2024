@@ -20,7 +20,8 @@ class GameUtil {
                 game.teamAway!!,
                 game.startsAt!!,
                 game.goalsHome,
-                game.goalsAway
+                game.goalsAway,
+                game.gameDone
             );
         }
     }

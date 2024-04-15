@@ -43,7 +43,7 @@ class Game : AbstractEntity() {
     var bets: MutableList<Bet> = mutableListOf();
 
     /**
-     * If all bets on this game have been evaluated
+     * If the game ended
      */
-    var bettingTransactionsDone: Boolean = false;
+    var gameDone: Boolean = false;
 }

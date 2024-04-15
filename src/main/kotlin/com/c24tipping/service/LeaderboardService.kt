@@ -54,7 +54,7 @@ class LeaderboardService : AbstractService() {
      * @param community The community that should be updated
      */
     fun updateCommunityLeaderboard(community: Community) {
-        val sorted = community.members.sortedBy { it.preliminaryPoints };
+        val sorted = community.members.sortedBy { it.preliminaryPoints }.reversed();
         this.databaseUpdate(sorted, community);
         val transaction: Transaction = transactionManager.transaction
         transaction.registerSynchronization(object : Synchronization {
@@ -81,7 +81,7 @@ class LeaderboardService : AbstractService() {
             hql += if (community != null) {
                 " AND l.community=:community";
             } else {
-                " AND .community IS NULL";
+                " AND l.community IS NULL";
             }
             val query = this.entityManager.createQuery(hql);
             query.setParameter("user", users.get(userIndex));

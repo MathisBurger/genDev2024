@@ -17,10 +17,17 @@ const AdminPage = () => {
 
     return (
         <Grid container direction="row" justifyContent="center">
-            <Grid xs={7}><h1 style={{textAlign: 'center'}}>Zukünftige Spiele</h1></Grid>
+            <Grid xs={7}><h1 style={{textAlign: 'center'}}>Spiele</h1></Grid>
             <Grid xs={6}>
                 <Grid xs={6} container direction="column" spacing={2}>
-                    {games.map((game) => (
+                    {games.filter(game => !game.done).map((game) => (
+                        <Grid xs={12}>
+                            <GameCard game={game} />
+                        </Grid>
+                    ))}
+                    <Divider />
+                    <h2 style={{textAlign: 'center'}}>Beendete Spiele</h2>
+                    {games.filter(game => game.done).map((game) => (
                         <Grid xs={12}>
                             <GameCard game={game} />
                         </Grid>

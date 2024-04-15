@@ -190,6 +190,26 @@ class ApiService {
     }
 
     /**
+     * Ends a game
+     *
+     * @param gameId The game ID
+     */
+    public async endGame(gameId: number): Promise<ApiResponse<string>> {
+        return await ApiService.post<string>("/api/admin/endGame", {password: this.password, gameId: gameId});
+    }
+
+    /**
+     * Renames a game
+     *
+     * @param gameId The ID of the game
+     * @param teamHome The home team name
+     * @param teamAway The away team name
+     */
+    public async renameGame(gameId: number, teamHome: string, teamAway: string): Promise<ApiResponse<string>> {
+        return await ApiService.post<string>("/api/admin/renameGame", {password: this.password, gameId, teamHome, teamAway});
+    }
+
+    /**
      * GET method
      *
      * @param path Path that should be fetched
