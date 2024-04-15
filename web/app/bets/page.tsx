@@ -1,7 +1,7 @@
 'use client';
 import AuthorizedLayout from "@/components/AuthorizedLayout";
 import usePersonalBets from "@/hooks/usePersonalBets";
-import {Grid} from "@mui/joy";
+import {Divider, Grid} from "@mui/joy";
 import BetCard from "@/components/BetCard";
 import useApiService from "@/hooks/useApiService";
 import {useEffect} from "react";
@@ -34,11 +34,20 @@ const BetsPage = () => {
                 <Grid xs={7}><h1 style={{textAlign: 'center'}}>Wetten</h1></Grid>
                 <Grid xs={6}>
                     <Grid xs={6} container direction="column" spacing={2}>
-                        {(getter ?? []).reverse().map((bet) => (
+                        {(getter ?? []).reverse().filter(b => !b.game.done).map((bet) => (
                             <Grid xs={12}>
                                 <BetCard bet={bet} />
                             </Grid>
                         ))}
+                        <Grid xs={12}>
+                            <Divider />
+                            <h2 style={{textAlign: 'center'}}>Vergangene Wetten</h2>
+                            {(getter ?? []).reverse().filter(b => b.game.done).map((bet) => (
+                                <Grid xs={12}>
+                                    <BetCard bet={bet} />
+                                </Grid>
+                            ))}
+                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>

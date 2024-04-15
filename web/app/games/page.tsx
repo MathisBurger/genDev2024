@@ -17,12 +17,12 @@ const GamesPage = () => {
     }, []);
 
     const futureGames = useMemo<MinifiedGame[]>(
-        () => games.filter((g) => new Date(g.startsAt).getTime() > new Date().getTime()),
+        () => games.filter((g) => new Date(g.startsAt).getTime() > new Date().getTime() || (!g.done && new Date(g.startsAt).getTime() < new Date().getTime())),
         [games]
     );
 
     const pastGames = useMemo<MinifiedGame[]>(
-        () => games.filter((g) => new Date(g.startsAt).getTime() < new Date().getTime()),
+        () => games.filter((g) => new Date(g.startsAt).getTime() < new Date().getTime() || g.done),
         [games]
     );
 
