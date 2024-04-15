@@ -46,18 +46,12 @@ class User : AbstractEntity() {
      * All users that this user has pinned
      */
     @OneToMany(mappedBy = "pinningUser")
-    @JoinTable(name = "user_pinned",
-        joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],
-        inverseJoinColumns = [JoinColumn(name = "pinned_id", referencedColumnName = "id")])
     var pinnedUsers: MutableList<PinnedUser> = mutableListOf();
 
     /**
      * All entrys where the user is pinned in
      */
     @OneToMany(mappedBy = "pinnedUser")
-    @JoinTable(name = "user_pinned_in",
-        joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],
-        inverseJoinColumns = [JoinColumn(name = "pinned_id", referencedColumnName = "id")])
     var pinnedIn: MutableList<PinnedUser> = mutableListOf();
 
     override fun toString(): String {
