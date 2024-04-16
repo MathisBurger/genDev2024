@@ -62,3 +62,6 @@ While the application's frontend is somewhat responsive, certain components aren
 Therefore, there could be a mobile app or a better-optimized web application. In the case of building a mobile app, I would use 
 React Native due to its cross-platform capability (both iOS and Android), and the fact that core components, like the APIService
 of the web application, can still be reused.
+
+Furthermore, to ensure that the application functions correctly even after updating
+some software components, I would carry out testing through both UnitTests and end-to-end (e2e) tests.
