@@ -9,6 +9,7 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository
 import io.quarkus.panache.common.Sort
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.persistence.criteria.*
+import kotlin.math.ceil
 
 /**
  * Handles leaderboard transactions
@@ -106,6 +107,8 @@ class LeaderboardRepository : PanacheRepository<LeaderboardEntry> {
         val cq: CriteriaQuery<LeaderboardEntry> = qb.createQuery(LeaderboardEntry::class.java);
         val root: Root<LeaderboardEntry> = cq.from(LeaderboardEntry::class.java);
         val user: Join<LeaderboardEntry, User> = root.join<LeaderboardEntry, User>("user");
+        println(count);
+        println(this.getPageLimit(lp, count, 0));
         val conditions = qb.or(
             qb.greaterThan(root.get("placement"), this.getPageLimit(lp, count, 0)),
             qb.lessThan(root.get("placement"), this.getPageLimit(upperPage, count, 1)),
@@ -131,8 +134,9 @@ class LeaderboardRepository : PanacheRepository<LeaderboardEntry> {
      * @param pageType The type of page (1 for upper, 0 for lower)
      */
     private fun getPageLimit(pageNr: Int, count: Long, pageType: Int): Int {
+        val countDiv = (count % 10);
         if (pageNr == (count / 10).toInt()-1) {
-            return (pageNr+1) *10 -1;
+            return (pageNr+1) *10 -1+countDiv.toInt();
         }
         if (pageNr == 1) {
             return 4;

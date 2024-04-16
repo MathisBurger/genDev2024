@@ -90,7 +90,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
     }, [elements]);
 
     const bottomElements = useMemo<LeaderboardElement[]>(() => {
-        const filtered= [];
+        let filtered= [];
         let i = elements.length-1;
         while (0 < i && elements[i-1].placement+1 === elements[i].placement) {
             filtered.push(elements[i]);
@@ -99,7 +99,20 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
         if (elements.length > 0) {
             filtered.push(elements[i]);
         }
-        return leaderboardSortByCreation(filtered.reverse().filter((f) => !topElements.map(e => e.user.username).includes(f.user.username)));
+        filtered = filtered.reverse();
+        const updatedElements: LeaderboardElement[] = [];
+        for (let i=0; i<filtered.length; i++) {
+            if (i===0) {
+                updatedElements.push(filtered[i]);
+                continue;
+            }
+            if (updatedElements.length > 0 && filtered.length > 0 && filtered[i].user.preliminaryPoints === updatedElements[i-1].user.preliminaryPoints) {
+                updatedElements.push({...filtered[i], placement: updatedElements[i-1].placement});
+                continue;
+            }
+            updatedElements.push(filtered[i])
+        }
+        return leaderboardSortByCreation(updatedElements.filter((f) => !topElements.map(e => e.user.username).includes(f.user.username)));
     }, [elements]);
 
     const youElement = useMemo<LeaderboardElement[]>(
@@ -147,10 +160,10 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
 
     const getPlacementDifference = useCallback((entry: LeaderboardElement) => {
         if (communityId) {
-            const found = entry.user.previousRanks.find((v) => v.community?.id === communityId)?.previousRank ?? 0;
+            const found = entry.user.previousRanks.find((v) => v.community?.id === communityId)?.previousRank ?? entry.placement;
             return entry.placement - found;
         }
-        const found = entry.user.previousRanks.find((v) => v.community === undefined)?.previousRank ?? 0;
+        const found = entry.user.previousRanks.find((v) => v.community === undefined)?.previousRank ?? entry.placement;
         return entry.placement - found;
     }, [elements, communityId]);
 

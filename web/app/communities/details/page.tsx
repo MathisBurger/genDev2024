@@ -27,7 +27,7 @@ const DetailsPage = () => {
     const [socket, setSocket] = useState<WebSocket|null>(null);
 
     useEffect(() => {
-        const socket = new WebSocket(`ws://localhost:8080/api/socket/community/${id}/${cookies.application_user}`);
+        const socket = new WebSocket(`ws://${process.env.NODE_ENV === "development" ? "localhost:8080" : location.host}/api/socket/community/${id}/${cookies.application_user}`);
         socket.onopen = () => {
             console.log("opened socket");
         }
