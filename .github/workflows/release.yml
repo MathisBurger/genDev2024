@@ -1,4 +1,4 @@
-name: Docker publish∆
+name: Docker publish
 
 on:
   #  push:
