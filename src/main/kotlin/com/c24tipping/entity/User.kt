@@ -60,6 +60,12 @@ class User : AbstractEntity() {
     @OneToMany(mappedBy = "pinnedUser")
     var pinnedIn: MutableList<PinnedUser> = mutableListOf();
 
+    /**
+     * All previous ranks
+     */
+    @OneToMany
+    var previousRanks: MutableList<LeaderboardRank> = mutableListOf();
+
     override fun toString(): String {
         return buildJSON(this, listOf("communities", "bets", "leaderboardPlacements", "pinnedUsers", "pinnedIn"))
     }

@@ -19,6 +19,7 @@ dependencies {
     implementation("io.quarkus:quarkus-websockets")
     implementation("io.quarkus:quarkus-config-yaml")
     implementation("io.quarkus:quarkus-kotlin")
+    implementation("io.quarkus:quarkus-scheduler")
     implementation("io.quarkus:quarkus-resteasy")
     implementation("io.quarkus:quarkus-hibernate-orm-panache")
     implementation("io.quarkus:quarkus-resteasy-jackson")

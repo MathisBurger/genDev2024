@@ -37,4 +37,14 @@ class Community : AbstractEntity() {
      */
     @OneToMany(mappedBy = "community")
     var pinnedUsers: MutableList<PinnedUser> = mutableListOf();
+
+    /**
+     * The previous ranks of the community
+     */
+    @OneToMany
+    var leaderboardRanks: MutableList<LeaderboardRank> = mutableListOf();
+
+    override fun toString(): String {
+        return AbstractEntity.buildJSON(this, listOf("leaderboardRanks", "pinnedUsers", "leaderboard", "members", "name"), this.id)
+    }
 }

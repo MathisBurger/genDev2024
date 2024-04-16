@@ -11,6 +11,13 @@ import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import {leaderboardSortByCreation} from "@/utils/dateUtils";
 
+export interface LeaderboardRank {
+    community: {
+        id: number
+    };
+    previousRank: number
+}
+
 export interface LeaderboardElement {
     placement: number;
     user: {
@@ -18,6 +25,7 @@ export interface LeaderboardElement {
         points: number;
         preliminaryPoints: number;
         createdAt: string;
+        previousRanks: LeaderboardRank[];
     }
 }
 
