@@ -11,9 +11,11 @@ services:
   server:
     depends_on:
       - postgres
-    image: ghcr.io/mathisburger/genDev24:latest
+    image: ghcr.io/mathisburger/gendev2024:latest
     platform: linux/amd64
     environment:
       DATABASE_URL: jdbc:postgresql://postgres:5432/genDev
+      ADMIN_PW: admin1234
+      JAVA_OPTS: "-Xmx5G -Xms5G"
     ports:
       - "8080:8080"
