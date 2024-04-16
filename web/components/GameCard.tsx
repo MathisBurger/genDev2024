@@ -38,7 +38,7 @@ const GameCard = ({game, small}: GameCardProps) => {
                         </Grid>
                     )}
                     {pathname === "/admin" && (
-                        <Grid xs={5}>
+                        <Grid xs={12} lg={5}>
                             <ButtonGroup>
                                 <Button
                                     color="primary"

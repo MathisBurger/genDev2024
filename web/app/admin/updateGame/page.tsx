@@ -39,7 +39,7 @@ const UpdateGamePage = () => {
                 <Button onClick={() => router.back()}>Zurück</Button>
             </Grid>
             <Grid xs={7}><h1 style={{textAlign: 'center'}}>Spiel aktualisieren</h1></Grid>
-            <Grid xs={6}>
+            <Grid xs={12} lg={6}>
                 <Card>
                     <CardContent>
                         <form onSubmit={onSubmit}>
@@ -48,7 +48,7 @@ const UpdateGamePage = () => {
                                     <h2 style={{textAlign: 'center'}}>{gameName}</h2>
                                 </Grid>
                                 <Grid xs={12} container direction="row" spacing={2} justifyContent="center">
-                                    <Grid xs={1}>
+                                    <Grid xs={3} lg={1}>
                                         <Input
                                             type="number"
                                             name="homeGoals"
@@ -60,7 +60,7 @@ const UpdateGamePage = () => {
                                     <Grid xs={1}>
                                         <h1 style={{textAlign: 'center', fontWeight: 'bold'}}>:</h1>
                                     </Grid>
-                                    <Grid xs={1}>
+                                    <Grid xs={3} lg={1}>
                                         <Input
                                             type="number"
                                             name="awayGoals"
@@ -71,7 +71,7 @@ const UpdateGamePage = () => {
                                     </Grid>
                                 </Grid>
                                 <Grid xs={12} container direction="row" spacing={2} justifyContent="center">
-                                    <Grid xs={3}>
+                                    <Grid xs={6} lg={3}>
                                         <Button size="lg" fullWidth type="submit" loading={loading}>
                                             Aktualisieren
                                         </Button>

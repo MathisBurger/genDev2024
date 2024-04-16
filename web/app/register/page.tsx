@@ -27,7 +27,7 @@ const RegisterPage = () => {
 
 
     return (
-            <Box sx={{width: '25vw', position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
+            <Box sx={{width: {xs: '70vw', lg: '25vw', md: '25vw'}, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)'}}>
                 <Card>
                     <CardContent>
                         <Stack gap={4} sx={{ mb: 2 }}>

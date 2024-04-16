@@ -32,9 +32,9 @@ const GamesPage = () => {
     return (
         <AuthorizedLayout>
             <Grid container direction="row" justifyContent="center">
-                <Grid xs={7}><h1 style={{textAlign: 'center'}}>Zukünftige Spiele</h1></Grid>
-                <Grid xs={6}>
-                    <Grid xs={6} container direction="column" spacing={2}>
+                <Grid xs={7} lg={7}><h1 style={{textAlign: 'center'}}>Zukünftige Spiele</h1></Grid>
+                <Grid xs={12} lg={6}>
+                    <Grid xs={12} lg={6} container direction="column" spacing={2}>
                         {futureGames.map((game) => (
                             <Grid xs={12}>
                                 <GameCard game={game} />
@@ -46,7 +46,7 @@ const GamesPage = () => {
                 <Grid xs={7}>
                     <h1 style={{textAlign: 'center'}}>Vergangene Spiele</h1>
                 </Grid>
-                <Grid xs={6} container direction="row" spacing={2}>
+                <Grid xs={12} lg={6} container direction="row" spacing={2}>
                     {pastGames.map((game) => (
                         <Grid xs={12}>
                             <GameCard game={game} />

@@ -87,11 +87,7 @@ const DetailsPage = () => {
                         <Button onClick={onJoin}>Beitreten</Button>
                     )}
                     <Grid container direction="row" spacing={2} justifyContent="space-between">
-                        <Grid xs={4}>
-                            <h2>Mitglieder</h2>
-                            <EntityList columns={memberCols} rows={community.members} sx={{width: '250px', display: 'grid'}} noSlot hideFooter />
-                        </Grid>
-                        <Grid xs={8}>
+                        <Grid xs={12} lg={8}>
                             <h2>Leaderboard</h2>
                             <LeaderboardComponent
                                 elements={leaderboardElements}
@@ -102,6 +98,11 @@ const DetailsPage = () => {
                                 updateViaSocket={() => socket?.send("0,0")}
                             />
                         </Grid>
+                        <Grid xs={12} lg={4}>
+                            <h2>Mitglieder</h2>
+                            <EntityList columns={memberCols} rows={community.members} sx={{width: '250px', display: 'grid'}} noSlot hideFooter />
+                        </Grid>
+
                     </Grid>
                 </>
             )}

@@ -45,6 +45,16 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
     const [pinnedUsers, setPinnedUsers] = useState<CommunityMember[]>([]);
     const pinnedUsersUsernames = useMemo(() => pinnedUsers.map(u => u.username), [pinnedUsers]);
     const apiService = useApiService();
+    const [isMobile, setMobile] = useState<boolean>(false);
+
+    const tabWidth = useMemo<string>(() => {
+        return isMobile ? '70px' : '100px'
+    }, [isMobile]);
+
+
+    useEffect(() => {
+        setMobile(document.body.clientWidth < 750);
+    }, []);
 
     useEffect(() => {
         if (communityId) {
@@ -146,6 +156,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
 
 
     const renderRow = (els: any[], renderFav?: boolean) => {
+        els = els.filter(e => e !== null);
         const canBePinned = cookies.application_user !== els[2];
         const colorStyle = isSpecialDisplay(els[2]) ? '#c84df1' : undefined;
 
@@ -155,12 +166,12 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
                     {els.map((element, i) => (
                         <>
                             {i != 1 && (
-                                <ListItem sx={{width: '100px', height: '10px', padding: 0, margin: 0, overflow: 'hidden'}}>
+                                <ListItem sx={{width: tabWidth, height: '10px', padding: 0, margin: 0, overflow: 'hidden'}}>
                                     <p style={{margin: 0, color: colorStyle}}>{element}</p>
                                 </ListItem>
                             )}
                             {i == 1 && (
-                                <ListItem sx={{width: '100px', height: '10px', padding: 0, margin: 0, overflow: 'hidden'}}>
+                                <ListItem sx={{width: tabWidth, height: '10px', padding: 0, margin: 0, overflow: 'hidden'}}>
                                     <p style={{margin: 0, color: !Number.isNaN(parseInt(`${element}`)) && element !== 0 ? (element > 0 ? 'red' : 'green') : undefined}}>
                                         {!Number.isNaN(parseInt(`${element}`)) && element !== 0 ? (element > 0? <ArrowDropDownIcon /> : <ArrowDropUpIcon />) : undefined}
                                         {Number.isNaN(parseInt(`${element}`))
@@ -191,11 +202,11 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
 
     return (
         <List sx={{maxWidth: '600px'}}>
-            {renderRow(["Platzierung", "Delta", "Nutzername", "Punkte", "f. Punkte"], false)}
+            {renderRow(["Platzierung", "Delta", "Nutzername", "Punkte", isMobile ? null : "f. Punkte"], false)}
             <ListDivider sx={{margin: 0}} />
             {topElements.map((element) => (
                 <>
-                    {renderRow([element.placement, getPlacementDifference(element), element.user.username, element.user.preliminaryPoints, element.user.points], communityId !== undefined)}
+                    {renderRow([element.placement, getPlacementDifference(element), element.user.username, element.user.preliminaryPoints, isMobile ? null : element.user.points], communityId !== undefined)}
                     <ListDivider sx={{margin: 0}} />
                 </>
             ))}
@@ -206,7 +217,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
                     </ListItemButton>
                 </ListItem>
             )}
-            {youElement.map((e) => renderRow([e.placement, getPlacementDifference(e), e.user.username, e.user.preliminaryPoints, e.user.points], communityId !== undefined))}
+            {youElement.map((e) => renderRow([e.placement, getPlacementDifference(e), e.user.username, e.user.preliminaryPoints, isMobile ? null : e.user.points], communityId !== undefined))}
             {displayButtons && (
                 <ListItem>
                     <ListItemButton sx={{display: 'grid', placeItems: 'center'}} onClick={bottomPageIncrease}>
@@ -216,7 +227,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
             )}
             {bottomElements.map((element) => (
                 <>
-                    {renderRow([element.placement, getPlacementDifference(element), element.user.username, element.user.preliminaryPoints, element.user.points], communityId !== undefined)}
+                    {renderRow([element.placement, getPlacementDifference(element), element.user.username, element.user.preliminaryPoints, isMobile ? null : element.user.points], communityId !== undefined)}
                     <ListDivider sx={{margin: 0}} />
                 </>
             ))}

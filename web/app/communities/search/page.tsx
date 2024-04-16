@@ -50,12 +50,12 @@ const SearchPage = () => {
         {
             field: 'name',
             headerName: "Name",
-            width: 650
+            width: 200
         },
         {
             field: 'memberCount',
             headerName: "Mitglieder",
-            width: 200
+            width: 100
         },
         {
             field: '_actions',
@@ -93,10 +93,10 @@ const SearchPage = () => {
                 <h1>Communities suchen</h1>
                 <form onSubmit={onSearchSubmit}>
                     <Grid direction="row" spacing={2} container>
-                        <Grid xs={10}>
+                        <Grid xs={8} lg={10}>
                             <Input type="text" name="search" placeholder="Suche" />
                         </Grid>
-                        <Grid xs={2}>
+                        <Grid xs={2} lg={2}>
                             <Button type="submit">Suchen</Button>
                         </Grid>
                     </Grid>

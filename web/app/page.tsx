@@ -15,14 +15,14 @@ const Page = () => {
       <AuthorizedLayout>
           <h1>Dashboard</h1>
           <Grid container direction="row" spacing={2}>
-              <Grid xs={4}>
+              <Grid xs={12} lg={4}>
                   <CurrentGamesCard />
               </Grid>
-              <Grid xs={4}>
+              <Grid xs={12} lg={4}>
                   <DashboardLeaderboard />
               </Grid>
               {getter.map(comm => (
-                  <Grid xs={4}>
+                  <Grid xs={12} lg={4}>
                       <DashboardLeaderboard community={comm} />
                   </Grid>
               ))}

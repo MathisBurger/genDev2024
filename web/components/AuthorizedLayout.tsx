@@ -1,6 +1,8 @@
-import {Box} from "@mui/joy";
+import {Box, Button, Grid} from "@mui/joy";
 import Sidebar from "@/components/Sidebar";
 import {ReactNode} from "react";
+import {openSidebar, toggleSidebar} from "@/utils/sidebarUtils";
+import MenuIcon from '@mui/icons-material/Menu';
 
 interface AuthorizedLayoutProps {
     children: ReactNode;
@@ -30,6 +32,19 @@ const AuthorizedLayout = ({children}: AuthorizedLayoutProps) => {
                     gap: 1,
                 }}
             >
+                <Grid container direction="row" justifyContent="flex-end">
+                    <Grid lg={0} md={0} xs={2}>
+                        <Button onClick={() => toggleSidebar()} color="neutral" variant="outlined" sx={{
+                            display: {
+                                xs: 'block',
+                                md: 'none',
+                                lg: 'none'
+                            }
+                        }}>
+                            <MenuIcon />
+                        </Button>
+                    </Grid>
+                </Grid>
                 {children}
             </Box>
         </Box>

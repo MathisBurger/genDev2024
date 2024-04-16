@@ -33,8 +33,8 @@ const BetsPage = () => {
         <AuthorizedLayout>
             <Grid container direction="row" justifyContent="center">
                 <Grid xs={7}><h1 style={{textAlign: 'center'}}>Wetten</h1></Grid>
-                <Grid xs={6}>
-                    <Grid xs={6} container direction="column" spacing={2}>
+                <Grid xs={12} lg={6}>
+                    <Grid xs={12} lg={6} container direction="column" spacing={2}>
                         {(getter ?? []).reverse().filter(b => !b.game.done).map((bet) => (
                             <Grid xs={12}>
                                 <BetCard bet={bet} />

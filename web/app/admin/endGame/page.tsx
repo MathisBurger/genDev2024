@@ -35,7 +35,7 @@ const RenameGamePage = () => {
                 <Button onClick={() => router.back()}>Zurück</Button>
             </Grid>
             <Grid xs={7}><h1 style={{textAlign: 'center'}}>Spiel umbenennen</h1></Grid>
-            <Grid xs={6}>
+            <Grid xs={12} lg={6}>
                 <Card>
                     <CardContent>
                         <form onSubmit={onSubmit}>
@@ -47,7 +47,7 @@ const RenameGamePage = () => {
                                     <h1 style={{textAlign: 'center'}}>{homeGoals} {' : '} {awayGoals}</h1>
                                 </Grid>
                                 <Grid xs={12} container direction="row" spacing={2} justifyContent="center">
-                                    <Grid xs={3}>
+                                    <Grid xs={6} lg={3}>
                                         <Button size="lg" fullWidth type="submit" loading={loading}>
                                             Spiel beenden
                                         </Button>

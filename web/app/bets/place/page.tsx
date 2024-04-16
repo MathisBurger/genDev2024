@@ -46,13 +46,13 @@ const PlaceBetPage = () => {
                         <h2 style={{textAlign: 'center'}}>{gameName}</h2>
                     </Grid>
                     <Grid xs={12} container direction="row" spacing={2} justifyContent="center">
-                        <Grid xs={1}>
+                        <Grid xs={4}>
                             <Input type="number" name="homeGoals" required style={{fontSize: '4em', fontWeight: 'bold'}} />
                         </Grid>
                         <Grid xs={1}>
                             <h1 style={{textAlign: 'center', fontWeight: 'bold'}}>:</h1>
                         </Grid>
-                        <Grid xs={1}>
+                        <Grid xs={4}>
                             <Input type="number" name="awayGoals" required style={{fontSize: '4em', fontWeight: 'bold'}} />
                         </Grid>
                     </Grid>
