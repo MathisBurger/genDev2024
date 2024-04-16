@@ -41,10 +41,10 @@ const DashboardLeaderboard = ({community}: DashboardLeaderboardProps) => {
 
     const getPlacementDifference = useCallback((entry: LeaderboardElement) => {
         if (community?.id) {
-            const found = entry.user.previousRanks.find((v) => v.community?.id === community.id)?.previousRank ?? 0;
+            const found = entry.user.previousRanks.find((v) => v.community?.id === community.id)?.previousRank ?? entry.placement;
             return entry.placement - found;
         }
-        const found = entry.user.previousRanks.find((v) => v.community === undefined)?.previousRank ?? 0;
+        const found = entry.user.previousRanks.find((v) => v.community === undefined)?.previousRank ?? entry.placement;
         return entry.placement - found;
     }, [elements, community]);
 

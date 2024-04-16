@@ -24,6 +24,7 @@ dependencies {
     implementation("io.quarkus:quarkus-hibernate-orm-panache")
     implementation("io.quarkus:quarkus-resteasy-jackson")
     implementation("io.quarkus:quarkus-webjars-locator")
+    implementation("io.quarkus:quarkus-reactive-routes")
     implementation("io.quarkus:quarkus-jdbc-postgresql")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.quarkus:quarkus-arc")

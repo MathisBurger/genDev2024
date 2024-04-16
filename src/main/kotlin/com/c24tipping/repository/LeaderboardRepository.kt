@@ -107,8 +107,6 @@ class LeaderboardRepository : PanacheRepository<LeaderboardEntry> {
         val cq: CriteriaQuery<LeaderboardEntry> = qb.createQuery(LeaderboardEntry::class.java);
         val root: Root<LeaderboardEntry> = cq.from(LeaderboardEntry::class.java);
         val user: Join<LeaderboardEntry, User> = root.join<LeaderboardEntry, User>("user");
-        println(count);
-        println(this.getPageLimit(lp, count, 0));
         val conditions = qb.or(
             qb.greaterThan(root.get("placement"), this.getPageLimit(lp, count, 0)),
             qb.lessThan(root.get("placement"), this.getPageLimit(upperPage, count, 1)),
