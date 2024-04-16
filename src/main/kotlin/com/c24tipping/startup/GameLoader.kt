@@ -27,7 +27,7 @@ class GameLoader {
      */
     @Startup
     fun load()  {
-        val file = File(".././../../../game_schedule.csv");
+        val file = File("game_schedule.csv");
         if (!file.exists()) {
             println("Game file does not exist");
             return;

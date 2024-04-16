@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: genDev
+    ports:
+      - "5432:5432"
+  server:
+    depends_on:
+      - postgres
+    image: ghcr.io/mathisburger/genDev24:latest
+    platform: linux/amd64
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/genDev
+    ports:
+      - "8080:8080"
