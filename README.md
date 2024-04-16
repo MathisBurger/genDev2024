@@ -10,18 +10,20 @@ This is my project approach for the [GenDev](https://www.talents.check24.de/gend
 
 ## Technology and framework choice
 
-I have chosen kotlin as my backend programing language and quarkus as my framework of choice for backend 
-development. I am very familiar with Quarkus. Initially, I wanted to use PHP together with the 
-symfony framework, but PHP is not that good at handling websocket connections.
+I've selected Kotlin as my backend programming language and Quarkus as my preferred framework for backend development.
+My familiarity with Quarkus is quite extensive. Initially, I considered using PHP in conjunction with the
+Symfony framework. However, given PHP's subpar performance in handling WebSocket connections, I opted for the former options.
 
-As the technology for real-time updates I used both, websockets and polling to demonstrate I am able to work and implement both.
-I have chosen websockets for the community and the global leaderboard, because it transfers large amount of data if the user expands it very fast.
-Therefore, I have chosen websockets for this feature. I used polling for the live updates of games and the dashboard, because these requests return a limited
-amount of data which is easier to handle with simple polling, because it is not as complex as a websocket connection.
+I utilized both WebSockets and polling technology for real-time updates to showcase my proficiency in implementing both methods.
+I selected WebSockets for the community and global leaderboard, as it efficiently handles large data transfers particularly when users expand it rapidly.
+Hence, WebSockets was the optimal choice for this feature. Conversely, I opted for polling for the live updates of games
+and the dashboard. This is because these requests yield a limited amount of data, which is more manageable through 
+simple polling due to its lower complexity compared to a WebSocket connection.
 
-For the frontend of the application I have chosen Next.JS which is a superset of React. Furthermore, I used typescript to
-bring a nearly typesafe system into my frontend to decrease the risk of type errors. For the UI I used a library 
-called Joy UI which is similar to Material UI. It made the workflow of designing the application user interface much easier for me, even if I know CSS well. 
+For the frontend of the application, I selected Next.JS, which is a superset of React. I also employed TypeScript to ensure nearly typesafe
+system implementation in my frontend, effectively minimizing the risk of type errors. For the UI,
+I utilized a library called Joy UI, which bears similarity to Material UI. This significantly simplified the process of designing
+the application's user interface, even though I am well-versed in CSS. 
 
 ## Project in action
 
@@ -42,16 +44,21 @@ docker-compose up -d
 
 ## Possible improvements
 
-Although the docker container is able to handle 10.000 Websocket connections and 2.000.000 active users it uses
-a vast amount of RAM and is currently limited to physically one server to work properly. It is possible to scale 
-horizontally using something kubernetes or docker swarm, but then not all websocket connections will provide real-time updates
-and the website needs to be refreshed, but the dashboard still provides real time updates, because the polling requests are stateless.
-This problem can be solved by implementing a messaging microservice like Apache Kafka to trigger all running instances of the backend to send
-updates though the websockets to the clients.
+Even though the Docker container is capable of handling 10,000 WebSocket connections and 2,000,000 active users, it uses a considerable amount
+of RAM and is currently confined to a single physical server for proper operation. Though it's possible to scale
+horizontally using services such as Kubernetes or Docker Swarm, not all WebSocket connections would provide real-time
+updates in this scenario. Consequently, the website would need to be refreshed, although the dashboard would still provide real-time updates, given that
+the polling requests are stateless. This issue could be resolved by implementing a messaging microservice, like Apache Kafka. 
+This would prompt all active instances of the backend to send updates through the WebSockets to the clients.
 
-Not all the database queries are well optimized. There is some potential to prevent fetching unnecessary data and remove redundant
-`WHERE` clauses. This could lower the database load and query complexity.
+Some of the database queries are not fully optimized. There is potential to prevent the fetching of unnecessary data and eliminate
+redundant `WHERE` clauses. Implementing these changes could decrease database load and reduce query complexity.
 
-Although, the application frontend is kind of responsive, there are some components that are not really optimized for mobile devices.
-Therefore, there should be a mobile app or a better optimized web application. I would build a mobile app using react native, because it is capable 
-of cross-platform (IOS and Android) and core components like the APIService of the web application can be reused.
+Furthermore, I should have implemented caching for load-heavy requests to improve the overall performance of the application.
+Although it seemed too complex to implement caching for these highly user-individual queries, this could be a challenge 
+to tackle in the future.
+
+While the application's frontend is somewhat responsive, certain components aren't optimized for mobile devices. 
+Therefore, there could be a mobile app or a better-optimized web application. In the case of building a mobile app, I would use 
+React Native due to its cross-platform capability (both iOS and Android), and the fact that core components, like the APIService
+of the web application, can still be reused.
