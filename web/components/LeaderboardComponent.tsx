@@ -10,9 +10,11 @@ import ResponseCode from "@/service/ResponseCode";
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import {leaderboardSortByCreation} from "@/utils/dateUtils";
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 export interface LeaderboardRank {
-    community: {
+    community?: {
         id: number
     };
     previousRank: number
@@ -133,30 +135,51 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
         }
     }
 
+    const getPlacementDifference = useCallback((entry: LeaderboardElement) => {
+        if (communityId) {
+            const found = entry.user.previousRanks.find((v) => v.community?.id === communityId)?.previousRank ?? 0;
+            return entry.placement - found;
+        }
+        const found = entry.user.previousRanks.find((v) => v.community === undefined)?.previousRank ?? 0;
+        return entry.placement - found;
+    }, [elements, communityId]);
+
 
     const renderRow = (els: any[], renderFav?: boolean) => {
-        const canBePinned = cookies.application_user !== els[1];
-        const colorStyle = isSpecialDisplay(els[1]) ? '#c84df1' : undefined;
+        const canBePinned = cookies.application_user !== els[2];
+        const colorStyle = isSpecialDisplay(els[2]) ? '#c84df1' : undefined;
 
         return (
             <ListItem sx={{padding: 0, margin: 0}}>
                 <List orientation="horizontal" sx={{padding: 0, margin: 0}}>
-                    {els.map((element) => (
+                    {els.map((element, i) => (
                         <>
-                            <ListItem sx={{width: '150px', height: '10px', padding: 0, margin: 0}}>
-                                <p style={{margin: 0, color: colorStyle}}>{element}</p>
-                            </ListItem>
+                            {i != 1 && (
+                                <ListItem sx={{width: '100px', height: '10px', padding: 0, margin: 0, overflow: 'hidden'}}>
+                                    <p style={{margin: 0, color: colorStyle}}>{element}</p>
+                                </ListItem>
+                            )}
+                            {i == 1 && (
+                                <ListItem sx={{width: '100px', height: '10px', padding: 0, margin: 0, overflow: 'hidden'}}>
+                                    <p style={{margin: 0, color: !Number.isNaN(parseInt(`${element}`)) && element !== 0 ? (element > 0 ? 'red' : 'green') : undefined}}>
+                                        {!Number.isNaN(parseInt(`${element}`)) && element !== 0 ? (element > 0? <ArrowDropDownIcon /> : <ArrowDropUpIcon />) : undefined}
+                                        {Number.isNaN(parseInt(`${element}`))
+                                            ? element
+                                            : Math.abs(element)}
+                                    </p>
+                                </ListItem>
+                            )}
                             <ListDivider />
                         </>
                     ))}
                     <ListItem sx={{width: '50px', height: '10px', padding: 0, margin: 0}}>
                         {pinnedUsersUsernames.includes(els[1]) && renderFav && canBePinned && (
-                            <ListItemButton onClick={() => unpinUser(els[1])}>
+                            <ListItemButton onClick={() => unpinUser(els[2])}>
                                 <StarIcon />
                             </ListItemButton>
                         )}
                         {!pinnedUsersUsernames.includes(els[1]) && renderFav && canBePinned && (
-                            <ListItemButton onClick={() => pinUser(els[1])}>
+                            <ListItemButton onClick={() => pinUser(els[2])}>
                                 <StarBorderIcon />
                             </ListItemButton>
                         )}
@@ -167,12 +190,12 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
     }
 
     return (
-        <List sx={{maxWidth: '700px'}}>
-            {renderRow(["Platzierung", "Nutzername", "Punkte", "Sichere Punkte"], false)}
+        <List sx={{maxWidth: '600px'}}>
+            {renderRow(["Platzierung", "Delta", "Nutzername", "Punkte", "f. Punkte"], false)}
             <ListDivider sx={{margin: 0}} />
             {topElements.map((element) => (
                 <>
-                    {renderRow([element.placement, element.user.username, element.user.preliminaryPoints, element.user.points], communityId !== undefined)}
+                    {renderRow([element.placement, getPlacementDifference(element), element.user.username, element.user.preliminaryPoints, element.user.points], communityId !== undefined)}
                     <ListDivider sx={{margin: 0}} />
                 </>
             ))}
@@ -183,7 +206,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
                     </ListItemButton>
                 </ListItem>
             )}
-            {youElement.map((e) => renderRow([e.placement, e.user.username, e.user.preliminaryPoints, e.user.points], communityId !== undefined))}
+            {youElement.map((e) => renderRow([e.placement, getPlacementDifference(e), e.user.username, e.user.preliminaryPoints, e.user.points], communityId !== undefined))}
             {displayButtons && (
                 <ListItem>
                     <ListItemButton sx={{display: 'grid', placeItems: 'center'}} onClick={bottomPageIncrease}>
@@ -193,7 +216,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
             )}
             {bottomElements.map((element) => (
                 <>
-                    {renderRow([element.placement, element.user.username, element.user.preliminaryPoints, element.user.points], communityId !== undefined)}
+                    {renderRow([element.placement, getPlacementDifference(element), element.user.username, element.user.preliminaryPoints, element.user.points], communityId !== undefined)}
                     <ListDivider sx={{margin: 0}} />
                 </>
             ))}

@@ -1,14 +1,16 @@
 import {Community} from "@/typings/community";
-import {useEffect, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {LeaderboardElement} from "@/components/LeaderboardComponent";
 import useApiService from "@/hooks/useApiService";
 import {useCookies} from "react-cookie";
-import {Card, CardContent, List, ListDivider, ListItem, ListItemButton} from "@mui/joy";
+import {Card, CardContent, Grid, List, ListDivider, ListItem, ListItemButton} from "@mui/joy";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import {leaderboardSortByCreation} from "@/utils/dateUtils";
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 
 interface DashboardLeaderboardProps {
@@ -37,6 +39,15 @@ const DashboardLeaderboard = ({community}: DashboardLeaderboardProps) => {
         return leaderboardSortByCreation(updatedElements);
     }, [entries]);
 
+    const getPlacementDifference = useCallback((entry: LeaderboardElement) => {
+        if (community?.id) {
+            const found = entry.user.previousRanks.find((v) => v.community?.id === community.id)?.previousRank ?? 0;
+            return entry.placement - found;
+        }
+        const found = entry.user.previousRanks.find((v) => v.community === undefined)?.previousRank ?? 0;
+        return entry.placement - found;
+    }, [elements, community]);
+
 
     useEffect(() => {
         apiService.getDashboardLeaderboard(community?.id).then(res => setEntries(res.data as LeaderboardElement[]));
@@ -46,17 +57,38 @@ const DashboardLeaderboard = ({community}: DashboardLeaderboardProps) => {
         return () => clearInterval(interval);
     }, []);
 
-    const renderRow = (els: any[]) => {
+    const renderRow = (els: any[], placementDiff?: number) => {
         const colorStyle = cookies.application_user === els[1] ? '#c84df1' : undefined;
 
         return (
             <ListItem sx={{padding: 0, margin: 0}}>
                 <List orientation="horizontal" sx={{padding: 0, margin: 0}}>
-                    {els.map((element) => (
+                    {els.map((element, i) => (
                         <>
-                            <ListItem sx={{width: '100px', height: '10px', padding: 0, margin: 0}}>
-                                <p style={{margin: 0, color: colorStyle}}>{element}</p>
-                            </ListItem>
+                            {i === 0 && (
+                                <ListItem sx={{width: '100px', height: '10px', padding: 0, margin: 0}}>
+                                    <p style={{margin: 0, color: colorStyle}}>
+                                        {element}
+                                    </p>
+                                    {placementDiff && placementDiff !== 0 && (
+                                        <p style={{color: placementDiff > 0 ? 'red' : 'green'}}>
+                                                <Grid container direction="row" spacing={2}>
+                                                    <Grid xs={4}>
+                                                        {placementDiff > 0? <ArrowDropDownIcon /> : <ArrowDropUpIcon />}
+                                                    </Grid>
+                                                    <Grid xs={8}>
+                                                        {Math.abs(placementDiff)}
+                                                    </Grid>
+                                                </Grid>
+                                        </p>
+                                    )}
+                                </ListItem>
+                            )}
+                            {i !== 0 && (
+                                <ListItem sx={{width: '100px', height: '10px', padding: 0, margin: 0}}>
+                                    <p style={{margin: 0, color: colorStyle}}>{element}</p>
+                                </ListItem>
+                            )}
                             <ListDivider />
                         </>
                     ))}
@@ -73,12 +105,15 @@ const DashboardLeaderboard = ({community}: DashboardLeaderboardProps) => {
                 <List sx={{maxWidth: '300px'}}>
                     {renderRow(["Platzierung", "Nutzername", "Punkte"])}
                     <ListDivider sx={{margin: 0}} />
-                    {elements.map((element) => (
-                        <>
-                            {renderRow([element.placement, element.user.username, element.user.preliminaryPoints])}
-                            <ListDivider sx={{margin: 0}} />
-                        </>
-                    ))}
+                    {elements.map((element) => {
+                        const placementDiff = getPlacementDifference(element);
+                        return (
+                            <>
+                                {renderRow([element.placement, element.user.username, element.user.preliminaryPoints], placementDiff)}
+                                <ListDivider sx={{margin: 0}} />
+                            </>
+                        )
+                    })}
                 </List>
             </CardContent>
         </Card>
