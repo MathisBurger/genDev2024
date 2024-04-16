@@ -10,14 +10,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '21'
-          cache: 'gradle'
-      - name: Build with Gradle
-        run: ./gradlew build -Dquarkus.package.type=uber-jar
       - name: set up buildx
         uses: docker/setup-buildx-action@v1
       - name: log in to ghcr
@@ -31,4 +23,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/mathisburger/genDev:latest
+          tags: ghcr.io/mathisburger/gendev2024:latest
