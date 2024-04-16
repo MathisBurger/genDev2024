@@ -24,8 +24,7 @@ ENV DATABASE_USER=postgres
 ENV DATABASE_URL=jdbc:postgresql://localhost:5432/genDev
 ENV ORM_GENERATION=update
 ENV ADMIN_PW=admin123
-ENV MAX_MEM=20G
 
 
 EXPOSE 8080
-CMD ["java", "-Xmx${MAX_MEM}", "-Xms${MAX_MEM}", "-Dquarkus.datasource.username=${DATABASE_USER}", "-Dquarkus.datasource.password=${DATABASE_PASSWORD}", "-Dquarkus.datasource.jdbc.url=${DATABASE_URL}", "-Dquarkus.hibernate-orm.database.generation=${ORM_GENERATION}", "-Dc24tipping.adminPW=${ADMIN_PW}", "-Dc24tipping.loadFixtures=false", "-jar", "server.jar"]
+CMD ["java", "-XX:MaxRAMPercentage=75", "-XshowSettings:vm", "-Dquarkus.datasource.username=${DATABASE_USER}", "-Dquarkus.datasource.password=${DATABASE_PASSWORD}", "-Dquarkus.datasource.jdbc.url=${DATABASE_URL}", "-Dquarkus.hibernate-orm.database.generation=${ORM_GENERATION}", "-Dc24tipping.adminPW=${ADMIN_PW}", "-Dc24tipping.loadFixtures=false", "-jar", "server.jar"]

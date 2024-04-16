@@ -16,6 +16,5 @@ services:
     environment:
       DATABASE_URL: jdbc:postgresql://postgres:5432/genDev
       ADMIN_PW: admin1234
-      MAX_MEM: 5G
     ports:
       - "8080:8080"
