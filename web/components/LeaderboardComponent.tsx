@@ -9,6 +9,7 @@ import {CommunityMember} from "@/typings/community";
 import ResponseCode from "@/service/ResponseCode";
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
+import {leaderboardSortByCreation} from "@/utils/dateUtils";
 
 export interface LeaderboardElement {
     placement: number;
@@ -16,6 +17,7 @@ export interface LeaderboardElement {
         username: string;
         points: number;
         preliminaryPoints: number;
+        createdAt: string;
     }
 }
 
@@ -64,7 +66,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
             }
             i++;
         }
-        return filtered.splice(0, filtered.length-(filtered.length % 10 -3));
+        return leaderboardSortByCreation(filtered.splice(0, filtered.length-(filtered.length % 10 -3)));
     }, [elements]);
 
     const bottomElements = useMemo<LeaderboardElement[]>(() => {
@@ -77,7 +79,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
         if (elements.length > 0) {
             filtered.push(elements[i]);
         }
-        return filtered.reverse().filter((f) => !topElements.map(e => e.user.username).includes(f.user.username));
+        return leaderboardSortByCreation(filtered.reverse().filter((f) => !topElements.map(e => e.user.username).includes(f.user.username)));
     }, [elements]);
 
     const youElement = useMemo<LeaderboardElement[]>(
@@ -98,7 +100,7 @@ const LeaderboardComponent = ({elements, topPageIncrease, bottomPageIncrease, ma
                 }
                 updatedElements.push(youElements[i])
             }
-            return updatedElements;
+            return leaderboardSortByCreation(updatedElements);
         },
         [elements, topElements, bottomElements]);
 

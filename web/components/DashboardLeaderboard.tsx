@@ -8,6 +8,7 @@ import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import {leaderboardSortByCreation} from "@/utils/dateUtils";
 
 
 interface DashboardLeaderboardProps {
@@ -27,13 +28,13 @@ const DashboardLeaderboard = ({community}: DashboardLeaderboardProps) => {
                 updatedElements.push(entries[i]);
                 continue;
             }
-            if (updatedElements.length > 0 && entries[i].user.preliminaryPoints === updatedElements[i-1].user.preliminaryPoints) {
+            if (updatedElements.length > 0 && entries.length > 0 && entries[i].user.preliminaryPoints === updatedElements[i-1].user.preliminaryPoints) {
                 updatedElements.push({...entries[i], placement: updatedElements[i-1].placement});
                 continue;
             }
             updatedElements.push(entries[i])
         }
-        return updatedElements;
+        return leaderboardSortByCreation(updatedElements);
     }, [entries]);
 
 

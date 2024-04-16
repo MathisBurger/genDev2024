@@ -7,6 +7,7 @@ import com.c24tipping.repository.UserRepository
 import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.transaction.Transactional
+import java.util.*
 
 /**
  * User service that handles user interactions
@@ -28,6 +29,7 @@ class UserService : AbstractService() {
         }
         val newUser = User()
         newUser.username = username;
+        newUser.createdAt = Date();
         this.entityManager.persist(newUser);
         val lbe = LeaderboardEntry()
         lbe.user = newUser;

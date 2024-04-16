@@ -1,6 +1,7 @@
 package com.c24tipping.entity
 
 import jakarta.persistence.*
+import java.util.Date
 
 /**
  * User entity that is used for login
@@ -13,6 +14,11 @@ class User : AbstractEntity() {
      * NOTE: The username is also used for login
      */
     var username: String? = null;
+
+    /**
+     * The creation date of the user
+     */
+    var createdAt: Date? = null;
 
     /**
      * All communities a user is member in

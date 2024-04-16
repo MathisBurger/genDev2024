@@ -15,6 +15,7 @@ import jakarta.inject.Inject
 import jakarta.persistence.EntityManager
 import jakarta.transaction.Transactional
 import org.eclipse.microprofile.config.inject.ConfigProperty
+import java.util.*
 import kotlin.random.Random
 
 @ApplicationScoped
@@ -54,12 +55,13 @@ class UserFixtureLoader {
             }
             val oddComm = this.communityRepository.find("name", "oddComm").firstResult<Community>();
             val evenComm = this.communityRepository.find("name", "evenComm").firstResult<Community>();
-            for (i in 1..300) {
+            for (i in 1..180) {
                 val user = this.userRepository.findByUsername("user-$i");
                 if (user.isEmpty) {
 
                     val usr = User()
                     usr.username = "user-$i";
+                    usr.createdAt = Date()
                     this.entityManager.persist(usr);
                     this.entityManager.flush();
 

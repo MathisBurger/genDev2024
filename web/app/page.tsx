@@ -18,11 +18,11 @@ const Page = () => {
               <Grid xs={4}>
                   <CurrentGamesCard />
               </Grid>
-              <Grid xs={3}>
+              <Grid xs={4}>
                   <DashboardLeaderboard />
               </Grid>
               {getter.map(comm => (
-                  <Grid xs={3}>
+                  <Grid xs={4}>
                       <DashboardLeaderboard community={comm} />
                   </Grid>
               ))}

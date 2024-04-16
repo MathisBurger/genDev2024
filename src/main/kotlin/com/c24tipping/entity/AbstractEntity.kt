@@ -29,7 +29,7 @@ abstract class AbstractEntity {
             for (i in 0..wantedFields.lastIndex) {
                 wantedFields[i].isAccessible = true;
                 builder.append("\"${wantedFields[i].name}\":");
-                if (wantedFields[i].type.toString().equals("class java.lang.String")) {
+                if (wantedFields[i].type.toString().equals("class java.lang.String") || wantedFields[i].type.toString().equals("class java.util.Date")) {
                     builder.append("\"${wantedFields[i].get(obj).toString()}\"");
                 } else {
                     builder.append(wantedFields[i].get(obj).toString());
