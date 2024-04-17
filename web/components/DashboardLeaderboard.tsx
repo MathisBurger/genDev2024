@@ -59,7 +59,6 @@ const DashboardLeaderboard = ({community}: DashboardLeaderboardProps) => {
 
     const renderRow = (els: any[], placementDiff?: number) => {
         const colorStyle = cookies.application_user === els[1] ? '#c84df1' : undefined;
-
         return (
             <ListItem sx={{padding: 0, margin: 0}}>
                 <List orientation="horizontal" sx={{padding: 0, margin: 0}}>
@@ -70,7 +69,7 @@ const DashboardLeaderboard = ({community}: DashboardLeaderboardProps) => {
                                     <p style={{margin: 0, color: colorStyle}}>
                                         {element}
                                     </p>
-                                    {placementDiff && placementDiff !== 0 && (
+                                    {placementDiff && placementDiff != 0 ? (
                                         <p style={{color: placementDiff > 0 ? 'red' : 'green'}}>
                                                 <Grid container direction="row" spacing={2}>
                                                     <Grid xs={4}>
@@ -81,7 +80,7 @@ const DashboardLeaderboard = ({community}: DashboardLeaderboardProps) => {
                                                     </Grid>
                                                 </Grid>
                                         </p>
-                                    )}
+                                    ) : null}
                                 </ListItem>
                             )}
                             {i !== 0 && (

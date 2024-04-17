@@ -1,7 +1,6 @@
 import {LeaderboardElement} from "@/components/LeaderboardComponent";
 
 export const leaderboardSortByCreation = (elements: LeaderboardElement[]) => {
-    console.log(elements);
     let placementArrays: Map<number, LeaderboardElement[]> = new Map();
     for (let element of elements) {
         if (placementArrays.has(element.placement)) {

@@ -16,6 +16,7 @@ import jakarta.enterprise.context.ApplicationScoped
 import jakarta.inject.Inject
 import jakarta.transaction.Transactional
 import java.util.Optional
+import java.util.concurrent.ExecutorService
 
 /**
  * The service that handles all community actions.
@@ -31,6 +32,9 @@ class CommunityService : AbstractService() {
 
     @Inject
     lateinit var leaderboardService: LeaderboardService;
+
+    @Inject
+    lateinit var executorService: ExecutorService;
 
     /**
      * Gets all communities
@@ -117,7 +121,7 @@ class CommunityService : AbstractService() {
         this.entityManager.persist(user.get());
         this.entityManager.persist(community.get());
         this.entityManager.flush();
-        this.leaderboardService.updateCommunityLeaderboard(community.get());
+        this.leaderboardService.updateCommunityLeaderboard(community.get().id!!);
         return this.convertToExtended(community.get());
     }
 

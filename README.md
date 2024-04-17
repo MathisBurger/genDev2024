@@ -51,6 +51,9 @@ updates in this scenario. Consequently, the website would need to be refreshed, 
 the polling requests are stateless. This issue could be resolved by implementing a messaging microservice, like Apache Kafka. 
 This would prompt all active instances of the backend to send updates through the WebSockets to the clients.
 
+Furthermore, the game update functionality takes a lot of time and resources which could be optimized by implementing multithreading
+for the sort and database transactions.
+
 Some of the database queries are not fully optimized. There is potential to prevent the fetching of unnecessary data and eliminate
 redundant `WHERE` clauses. Implementing these changes could decrease database load and reduce query complexity.
 
