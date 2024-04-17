@@ -42,6 +42,15 @@ If you want to start the application just run the application with the provided 
 docker-compose up -d
 ```
 
+## Load testing
+
+Due to the need for 2,000,000 active users and an additional 10,000 currently active individuals, it was necessary for me to thoroughly
+test the application and check its scaling capabilities. I established a Kubernetes environment with a standalone PostgreSQL database and five
+instances of the server container. All websocket connections were redirected to the first instance, while other web requests were load balanced.
+I tested a variety of scenarios with 100, 1,000, 10,000, and 100,000 users, monitoring the CPU and RAM usage of my docker cluster throughout.
+Subsequently, I defined a mathematical function to depict the incremental requirement for resources. The results indicated that the application
+is capable of supporting 2,000,000 users. However, this requires considerable memory that my laptop cannot provide, though a robust server can.
+
 ## Possible improvements
 
 Even though the Docker container is capable of handling 10,000 WebSocket connections and 2,000,000 active users, it uses a considerable amount
