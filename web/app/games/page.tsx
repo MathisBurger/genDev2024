@@ -46,7 +46,7 @@ const GamesPage = () => {
                 <Grid xs={7}>
                     <h1 style={{textAlign: 'center'}}>Vergangene Spiele</h1>
                 </Grid>
-                <Grid xs={12} lg={6} container direction="row" spacing={2}>
+                <Grid xs={12} lg={7} container direction="row" spacing={2}>
                     {pastGames.map((game) => (
                         <Grid xs={12}>
                             <GameCard game={game} />

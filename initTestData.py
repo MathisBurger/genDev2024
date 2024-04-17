@@ -2,7 +2,7 @@ import requests
 from random import randint
 
 
-for i in range(300, 2000000):
+for i in range(1, 2000000):
     url = "http://localhost:8080/api/user/register"
     payload = {"username": "user-" + str(i)}
     headers = {"Content-Type": "application/json"}

@@ -48,7 +48,7 @@ const UpdateGamePage = () => {
                                     <h2 style={{textAlign: 'center'}}>{gameName}</h2>
                                 </Grid>
                                 <Grid xs={12} container direction="row" spacing={2} justifyContent="center">
-                                    <Grid xs={3} lg={1}>
+                                    <Grid xs={3} lg={2}>
                                         <Input
                                             type="number"
                                             name="homeGoals"
@@ -60,7 +60,7 @@ const UpdateGamePage = () => {
                                     <Grid xs={1}>
                                         <h1 style={{textAlign: 'center', fontWeight: 'bold'}}>:</h1>
                                     </Grid>
-                                    <Grid xs={3} lg={1}>
+                                    <Grid xs={3} lg={2}>
                                         <Input
                                             type="number"
                                             name="awayGoals"
