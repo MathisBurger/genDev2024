@@ -1,6 +1,6 @@
 # GenDev
 
-***NOTE: This project approach has not been submitted***
+***NOTE: This project approach has not been submitted. But it is not build to be used by other people who want to apply for the scholarship***
 
 This is my project approach for the [GenDev](https://www.talents.check24.de/gendev) scholarship 2024.
 
