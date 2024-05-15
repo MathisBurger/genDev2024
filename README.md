@@ -1,5 +1,7 @@
 # GenDev
 
+***NOTE: This project approach has not been submitted***
+
 This is my project approach for the [GenDev](https://www.talents.check24.de/gendev) scholarship 2024.
 
 - [Technology and framework choice](#technology-and-framework-choice)
